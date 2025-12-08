@@ -1,54 +1,60 @@
+```javascript
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const IntroAnimation = ({ onComplete }) => {
-    const [started, setStarted] = useState(false);
     const [step, setStep] = useState(0);
-    const audioRef = useRef(null);
+    const audioRef = useRef(new Audio('/intro.mp3'));
 
     // Configuration
     const START_TIME = 0;
     const DURATION = 3;
 
     useEffect(() => {
-        if (!started) return;
-
         const timer = setTimeout(() => {
             if (step < 3) {
                 setStep(step + 1);
             }
         }, 1500);
         return () => clearTimeout(timer);
-    }, [started, step]);
+    }, [step]);
 
-    const handleStart = async () => {
-        setStarted(true);
+    useEffect(() => {
+        audioRef.current.volume = 0.5;
+        audioRef.current.currentTime = START_TIME;
 
-        try {
-            audioRef.current = new Audio('/intro.mp3');
-            audioRef.current.volume = 0.5;
-            audioRef.current.currentTime = START_TIME;
-
-            await audioRef.current.play();
-
-            if (DURATION) {
-                setTimeout(() => {
-                    if (audioRef.current) {
-                        const fadeOut = setInterval(() => {
-                            if (audioRef.current.volume > 0.05) {
-                                audioRef.current.volume -= 0.05;
-                            } else {
-                                audioRef.current.pause();
-                                clearInterval(fadeOut);
-                            }
-                        }, 50);
-                    }
-                }, DURATION * 1000);
+        const playAudio = async () => {
+            try {
+                await audioRef.current.play();
+                
+                if (DURATION) {
+                    setTimeout(() => {
+                        if (audioRef.current) {
+                            const fadeOut = setInterval(() => {
+                                if (audioRef.current.volume > 0.05) {
+                                    audioRef.current.volume -= 0.05;
+                                } else {
+                                    audioRef.current.pause();
+                                    clearInterval(fadeOut);
+                                }
+                            }, 50);
+                        }
+                    }, DURATION * 1000);
+                }
+            } catch (err) {
+                console.error("Autoplay prevented by browser:", err);
+                // Fallback: We could show a "Unmute" button here if needed, 
+                // but for now we just log it as per user request for "instant" start.
             }
-        } catch (err) {
-            console.error("Audio playback failed:", err);
-        }
-    };
+        };
+
+        playAudio();
+
+        return () => {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        };
+    }, []);
 
     const variants = {
         initial: { scale: 0.8, opacity: 0 },
@@ -62,39 +68,6 @@ const IntroAnimation = ({ onComplete }) => {
         'var(--color-neon-green)', // Step 2: REIMAGINED
         'var(--color-neon-purple)' // Step 3: READY?
     ];
-
-    if (!started) {
-        return (
-            <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="intro-container"
-                style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundColor: 'var(--color-black)',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    zIndex: 9999,
-                    cursor: 'pointer'
-                }}
-                onClick={handleStart}
-            >
-                <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ repeat: Infinity, duration: 2 }}
-                    style={{ textAlign: 'center' }}
-                >
-                    <h1 style={{ fontSize: '2rem', color: 'var(--color-white)', marginBottom: '1rem', letterSpacing: '0.2em' }}>GYMBRO</h1>
-                    <p style={{ color: '#888', fontSize: '1rem' }}>CLICK TO START</p>
-                </motion.div>
-            </motion.div>
-        );
-    }
 
     return (
         <motion.div
