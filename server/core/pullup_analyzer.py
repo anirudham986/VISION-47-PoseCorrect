@@ -26,10 +26,8 @@ def analyze_pullup_video(video_path, output_path=None):
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     
-    out = None
-    if output_path:
-        fourcc = cv2.VideoWriter_fourcc(*'avc1')
-        out = cv2.VideoWriter(output_path, fourcc, fps, (width, height + 80))
+    # Output storage
+    output_frames = []
 
     rep_data = []
     state = "down" # down, up
@@ -38,22 +36,23 @@ def analyze_pullup_video(video_path, output_path=None):
     feedback = []
     corrections = []
     
-    min_chim_clearance = float('inf') # Logic: Chin y < wrist y for success? 
-    # Simplified logic: Wrist vs Shoulder vertical distance
+    min_chim_clearance = float('inf') 
     
     with mp_pose.Pose(min_detection_confidence=0.7, min_tracking_confidence=0.7, model_complexity=1) as pose:
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret: break
             
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            results = pose.process(image)
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            # RGB for MediaPipe and MoviePy
+            image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            image_rgb.flags.writeable = False
+            results = pose.process(image_rgb)
+            image_rgb.flags.writeable = True
             
             status_text = "Analysis Running"
             
             if results.pose_landmarks:
-                mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+                mp_drawing.draw_landmarks(image_rgb, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
                 
                 landmarks = results.pose_landmarks.landmark
                 
@@ -69,13 +68,8 @@ def analyze_pullup_video(video_path, output_path=None):
                 shoulder_y = (l_shoulder.y + r_shoulder.y) / 2
                 nose_y = nose.y
                 
-                # Pullup Logic
-                # UP phase: Chin (nose approx) is ABOVE wrists (smaller y value) OR Shoulders close to wrists
-                # DOWN phase: Shoulders far below wrists
-                
-                # Simple check: Chin above bar (approximated by wrists line)
                 is_above_bar = nose_y < wrist_y
-                is_full_hang = (shoulder_y - wrist_y) > 0.3 # Threshold for full arm extension? Relative.
+                is_full_hang = (shoulder_y - wrist_y) > 0.3 
                 
                 if state == "down":
                     if is_above_bar:
@@ -88,13 +82,22 @@ def analyze_pullup_video(video_path, output_path=None):
             # Overlay
             panel = np.zeros((80, width, 3), dtype=np.uint8)
             panel[:, :] = (40, 40, 40)
-            final = np.vstack([image, panel])
+            final = np.vstack([image_rgb, panel])
             cv2.putText(final, f"Reps: {rep_count}", (30, height + 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2)
             
-            if out: out.write(final)
+            output_frames.append(final)
             
     cap.release()
-    if out: out.release()
+    
+    # Write using MoviePy
+    if output_path and output_frames:
+        try:
+            from moviepy.editor import ImageSequenceClip
+            clip = ImageSequenceClip(output_frames, fps=fps)
+            clip.write_videofile(output_path, codec='libx264', audio=False, logger=None)
+        except Exception as e:
+            print(f"Error writing video: {e}")
+            return {"error": str(e)}
     
     if rep_count > 0:
         feedback.append("Great Effort")

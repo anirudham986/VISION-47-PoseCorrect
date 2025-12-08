@@ -140,10 +140,7 @@ def analyze_squat_video(video_path, output_path=None):
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     
     # Setup Output Writer
-    out = None
-    if output_path:
-        fourcc = cv2.VideoWriter_fourcc(*'avc1')
-        out = cv2.VideoWriter(output_path, fourcc, fps, (width, height + 80)) # +80 for panel
+    output_frames = []
 
     rep_data = []
     in_squat = False
@@ -162,18 +159,17 @@ def analyze_squat_video(video_path, output_path=None):
             
             frame_count += 1
             
-            # Process
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            image.flags.writeable = False
-            results = pose.process(image)
-            image.flags.writeable = True
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            # Process - Convert to RGB for MediaPipe (and MoviePy later)
+            image_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            image_rgb.flags.writeable = False
+            results = pose.process(image_rgb)
+            image_rgb.flags.writeable = True
             
             current_angle_val = 0
             
             if results.pose_landmarks:
                 mp_drawing.draw_landmarks(
-                    image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+                    image_rgb, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                     landmark_drawing_spec=mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=2),
                     connection_drawing_spec=mp_drawing.DrawingSpec(color=(255, 255, 255), thickness=2)
                 )
@@ -202,17 +198,24 @@ def analyze_squat_video(video_path, output_path=None):
                             "rating": get_depth_rating(min_knee_angle)
                         })
                 
-                image = add_angle_overlays(image, angles)
+                image_rgb = add_angle_overlays(image_rgb, angles)
             
             # Add Panel
-            final_image = add_info_panel(image, frame_count, total_frames, fps, rep_count, current_angle_val if 'current_angle_val' in locals() else 0)
+            final_image = add_info_panel(image_rgb, frame_count, total_frames, fps, rep_count, current_angle_val if 'current_angle_val' in locals() else 0)
             
-            if out:
-                out.write(final_image)
+            output_frames.append(final_image)
 
     cap.release()
-    if out:
-        out.release()
+    
+    # Write using MoviePy
+    if output_path and output_frames:
+        try:
+            from moviepy.editor import ImageSequenceClip
+            clip = ImageSequenceClip(output_frames, fps=fps)
+            clip.write_videofile(output_path, codec='libx264', audio=False, logger=None)
+        except Exception as e:
+            print(f"Error writing video: {e}")
+            return {"error": str(e)}
     
     # Generate Final Feedback
     avg_depth = 0
