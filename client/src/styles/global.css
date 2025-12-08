@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Outfit:wght@700;900&display=swap');
+@import './variables.css';
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-black);
+    color: var(--color-white);
+    font-family: var(--font-primary);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: 900;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    font-family: var(--font-display);
+    background: none;
+}
+
+* {
+    box-sizing: border-box;
+}
