@@ -204,7 +204,7 @@ def analyze_pushup_video(video_path, output_path=None):
             print(f"DEBUG: Writing {len(output_frames)} frames to {output_path} with MoviePy...")
             clip = ImageSequenceClip(output_frames, fps=fps)
             # Use libx264 for H.264 encoding which is web standard
-            clip.write_videofile(output_path, codec='libx264', audio=False, logger=None)
+            clip.write_videofile(output_path, codec='libx264', audio=False, logger=None, preset='ultrafast', threads=4)
             print("DEBUG: Video writing complete")
         except Exception as e:
             print(f"DEBUG: MoviePy writing failed: {str(e)}")

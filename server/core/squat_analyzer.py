@@ -212,7 +212,7 @@ def analyze_squat_video(video_path, output_path=None):
         try:
             from moviepy.editor import ImageSequenceClip
             clip = ImageSequenceClip(output_frames, fps=fps)
-            clip.write_videofile(output_path, codec='libx264', audio=False, logger=None)
+            clip.write_videofile(output_path, codec='libx264', audio=False, logger=None, preset='ultrafast', threads=4)
         except Exception as e:
             print(f"Error writing video: {e}")
             return {"error": str(e)}
