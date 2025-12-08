@@ -1,57 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const IntroAnimation = ({ onComplete }) => {
+    const [started, setStarted] = useState(false);
     const [step, setStep] = useState(0);
+    const audioRef = useRef(null);
+
+    // Configuration
+    const START_TIME = 0;
+    const DURATION = 3;
 
     useEffect(() => {
+        if (!started) return;
+
         const timer = setTimeout(() => {
             if (step < 3) {
                 setStep(step + 1);
-            } else {
-                // Allow user to click to enter after animation sequence
             }
         }, 1500);
         return () => clearTimeout(timer);
-    }, [step]);
+    }, [started, step]);
 
-    useEffect(() => {
-        const audio = new Audio('/intro.mp3');
-        audio.volume = 0.5;
+    const handleStart = async () => {
+        setStarted(true);
 
-        // Configuration: Change these values to trim the audio
-        const START_TIME = 0; // seconds
-        const DURATION = 3;   // seconds (or null to play to end)
+        try {
+            audioRef.current = new Audio('/intro.mp3');
+            audioRef.current.volume = 0.5;
+            audioRef.current.currentTime = START_TIME;
 
-        const playAudio = async () => {
-            try {
-                audio.currentTime = START_TIME;
-                await audio.play();
+            await audioRef.current.play();
 
-                if (DURATION) {
-                    setTimeout(() => {
+            if (DURATION) {
+                setTimeout(() => {
+                    if (audioRef.current) {
                         const fadeOut = setInterval(() => {
-                            if (audio.volume > 0.05) {
-                                audio.volume -= 0.05;
+                            if (audioRef.current.volume > 0.05) {
+                                audioRef.current.volume -= 0.05;
                             } else {
-                                audio.pause();
+                                audioRef.current.pause();
                                 clearInterval(fadeOut);
                             }
-                        }, 50); // Fade out over ~500ms
-                    }, DURATION * 1000);
-                }
-            } catch (err) {
-                console.log("Autoplay prevented:", err);
+                        }, 50);
+                    }
+                }, DURATION * 1000);
             }
-        };
-
-        playAudio();
-
-        return () => {
-            audio.pause();
-            audio.currentTime = 0;
-        };
-    }, []);
+        } catch (err) {
+            console.error("Audio playback failed:", err);
+        }
+    };
 
     const variants = {
         initial: { scale: 0.8, opacity: 0 },
@@ -60,11 +57,44 @@ const IntroAnimation = ({ onComplete }) => {
     };
 
     const bgColors = [
-        'var(--color-black)',
-        'var(--color-neon-pink)',
-        'var(--color-neon-green)',
-        'var(--color-neon-purple)'
+        'var(--color-black)',      // Step 0: YOUR
+        'var(--color-neon-pink)',  // Step 1: FITNESS
+        'var(--color-neon-green)', // Step 2: REIMAGINED
+        'var(--color-neon-purple)' // Step 3: READY?
     ];
+
+    if (!started) {
+        return (
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="intro-container"
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'var(--color-black)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 9999,
+                    cursor: 'pointer'
+                }}
+                onClick={handleStart}
+            >
+                <motion.div
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    style={{ textAlign: 'center' }}
+                >
+                    <h1 style={{ fontSize: '2rem', color: 'var(--color-white)', marginBottom: '1rem', letterSpacing: '0.2em' }}>GYMBRO</h1>
+                    <p style={{ color: '#888', fontSize: '1rem' }}>CLICK TO START</p>
+                </motion.div>
+            </motion.div>
+        );
+    }
 
     return (
         <motion.div
@@ -103,7 +133,7 @@ const IntroAnimation = ({ onComplete }) => {
                 {step === 3 && (
                     <motion.div key="step4" variants={variants} initial="initial" animate="animate" style={{ textAlign: 'center' }}>
                         <h1 style={{ fontSize: '4rem', color: 'var(--color-white)', marginBottom: '2rem' }}>READY?</h1>
-                        <p style={{ fontFamily: 'var(--font-primary)', fontSize: '1.2rem' }}>Click to start</p>
+                        <p style={{ fontFamily: 'var(--font-primary)', fontSize: '1.2rem' }}>Click to enter</p>
                     </motion.div>
                 )}
             </AnimatePresence>
