@@ -19,9 +19,27 @@ const IntroAnimation = ({ onComplete }) => {
         const audio = new Audio('/intro.mp3');
         audio.volume = 0.5;
 
+        // Configuration: Change these values to trim the audio
+        const START_TIME = 0; // seconds
+        const DURATION = 3;   // seconds (or null to play to end)
+
         const playAudio = async () => {
             try {
+                audio.currentTime = START_TIME;
                 await audio.play();
+
+                if (DURATION) {
+                    setTimeout(() => {
+                        const fadeOut = setInterval(() => {
+                            if (audio.volume > 0.05) {
+                                audio.volume -= 0.05;
+                            } else {
+                                audio.pause();
+                                clearInterval(fadeOut);
+                            }
+                        }, 50); // Fade out over ~500ms
+                    }, DURATION * 1000);
+                }
             } catch (err) {
                 console.log("Autoplay prevented:", err);
             }
