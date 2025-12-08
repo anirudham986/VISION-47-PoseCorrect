@@ -6,7 +6,7 @@ const LandingPage = ({ onStart }) => {
     return (
         <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-black)', color: 'var(--color-white)' }}>
             <nav style={{ padding: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2 style={{ fontSize: '1.5rem', color: 'var(--color-neon-green)' }}>VISION-47</h2>
+                <h2 style={{ fontSize: '1.5rem', color: 'var(--color-neon-green)' }}>GYMBRO</h2>
                 <button
                     onClick={onStart}
                     style={{
