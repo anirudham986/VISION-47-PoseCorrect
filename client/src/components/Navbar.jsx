@@ -12,6 +12,7 @@ const Navbar = () => {
             <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
                 <Link to="/about" style={{ color: 'var(--color-white)', textDecoration: 'none', fontSize: '1rem' }}>About Us</Link>
                 <Link to="/contact" style={{ color: 'var(--color-white)', textDecoration: 'none', fontSize: '1rem' }}>Contact Us</Link>
+                <Link to="/privacy" style={{ color: 'var(--color-white)', textDecoration: 'none', fontSize: '1rem' }}>Privacy</Link>
                 <button
                     onClick={() => navigate('/dashboard')}
                     style={{

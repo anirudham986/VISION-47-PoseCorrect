@@ -1,71 +1,133 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Camera, Video, ArrowLeft } from 'lucide-react';
+import { Camera, Video, ArrowLeft, ChevronDown, ChevronRight } from 'lucide-react';
 
 const exercises = [
     {
         id: 'pushup',
         name: 'PUSH UP',
-        difficulty: 'Beginner',
         targetMuscles: ['Chest', 'Triceps', 'Shoulders'],
-        gradient: 'linear-gradient(135deg, #ccff00 0%, #99cc00 100%)',
+        gradient: 'linear-gradient(90deg, #1a1a1a 0%, #1a1a1a 100%)',
         accentColor: '#ccff00',
+        image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80',
     },
     {
         id: 'pullup',
         name: 'PULL UP',
-        difficulty: 'Advanced',
         targetMuscles: ['Back', 'Biceps', 'Lats'],
-        gradient: 'linear-gradient(135deg, #9900ff 0%, #6600cc 100%)',
+        gradient: 'linear-gradient(90deg, #1a1a1a 0%, #1a1a1a 100%)',
         accentColor: '#9900ff',
+        image: 'https://images.unsplash.com/photo-1598971639058-211a74a96fb4?auto=format&fit=crop&q=80',
     },
     {
         id: 'benchpress',
         name: 'BENCH PRESS',
-        difficulty: 'Intermediate',
         targetMuscles: ['Chest', 'Triceps', 'Shoulders'],
-        gradient: 'linear-gradient(135deg, #ff0099 0%, #cc0077 100%)',
+        gradient: 'linear-gradient(90deg, #1a1a1a 0%, #1a1a1a 100%)',
         accentColor: '#ff0099',
+        image: 'https://images.unsplash.com/photo-1534367507873-d2d7e24c797f?auto=format&fit=crop&q=80',
     },
     {
         id: 'squat',
         name: 'SQUAT',
-        difficulty: 'Intermediate',
         targetMuscles: ['Quads', 'Glutes', 'Hamstrings'],
-        gradient: 'linear-gradient(135deg, #00ffcc 0%, #00cc99 100%)',
+        gradient: 'linear-gradient(90deg, #1a1a1a 0%, #1a1a1a 100%)',
         accentColor: '#00ffcc',
+        image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&q=80',
     },
     {
         id: 'deadlift',
         name: 'DEADLIFT',
-        difficulty: 'Advanced',
         targetMuscles: ['Back', 'Glutes', 'Hamstrings'],
-        gradient: 'linear-gradient(135deg, #ff6600 0%, #cc5200 100%)',
+        gradient: 'linear-gradient(90deg, #1a1a1a 0%, #1a1a1a 100%)',
         accentColor: '#ff6600',
+        image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80',
     }
 ];
 
+const ExerciseStrip = ({ exercise, onSelect, isHovered, setHovered }) => {
+    return (
+        <motion.div
+            layout
+            onMouseEnter={() => setHovered(exercise.id)}
+            onMouseLeave={() => setHovered(null)}
+            onClick={() => onSelect(exercise)}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+                width: '100%',
+                height: isHovered ? '200px' : '100px',
+                backgroundColor: 'rgba(255,255,255,0.03)',
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 2rem',
+                cursor: 'pointer',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+            }}
+        >
+            {/* Hover Background Accent */}
+            <motion.div
+                animate={{ opacity: isHovered ? 0.1 : 0 }}
+                style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: exercise.accentColor,
+                    zIndex: 0
+                }}
+            />
+
+            {/* Content */}
+            <div style={{ zIndex: 1, display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <motion.h2
+                        layout="position"
+                        style={{
+                            fontSize: isHovered ? '3rem' : '2rem',
+                            color: isHovered ? '#fff' : '#888',
+                            fontWeight: '900',
+                            margin: 0,
+                            letterSpacing: '-0.03em',
+                            transition: 'color 0.3s ease'
+                        }}
+                    >
+                        {exercise.name}
+                    </motion.h2>
+                    {isHovered && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}
+                        >
+                            {exercise.targetMuscles.map(muscle => (
+                                <span key={muscle} style={{ color: exercise.accentColor, fontSize: '0.9rem', fontWeight: 'bold' }}>
+                                    {muscle}
+                                </span>
+                            ))}
+                        </motion.div>
+                    )}
+                </div>
+
+                <motion.div
+                    animate={{ x: isHovered ? 10 : 0, scale: isHovered ? 1.2 : 1 }}
+                >
+                    <ChevronRight size={32} color={isHovered ? exercise.accentColor : "#444"} />
+                </motion.div>
+            </div>
+        </motion.div>
+    );
+};
+
 const Dashboard = () => {
     const navigate = useNavigate();
+    const [hoveredId, setHoveredId] = useState(null);
     const [selectedExercise, setSelectedExercise] = useState(null);
-
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.1 }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: { y: 0, opacity: 1 }
-    };
-
-    const handleExerciseSelect = (exercise) => {
-        setSelectedExercise(exercise);
-    };
 
     const handleModeSelect = (mode) => {
         const targetPath = mode === 'upload' ? '/upload' : '/coach';
@@ -73,219 +135,120 @@ const Dashboard = () => {
     };
 
     return (
-        <div style={{ minHeight: '100vh', padding: '2rem', backgroundColor: 'var(--color-black)', color: 'var(--color-white)' }}>
-            <button
-                onClick={() => navigate('/')}
-                style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    color: '#888',
-                    fontSize: '1rem',
-                    marginBottom: '2rem'
-                }}
-            >
-                <ArrowLeft size={20} /> Back to Home
-            </button>
-
-            {/* Exercise Selection Section */}
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                style={{ marginBottom: '4rem' }}
-            >
-                <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>
-                    CHOOSE YOUR <span style={{ color: 'var(--color-neon-pink)' }}>EXERCISE</span>
-                </h1>
-                <p style={{ color: '#888', fontSize: '1.1rem', marginBottom: '2rem' }}>
-                    Select an exercise to get started
-                </p>
-
-                <motion.div
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
+        <div style={{
+            minHeight: '100vh',
+            backgroundColor: '#000',
+            color: '#fff',
+            display: 'flex',
+            flexDirection: 'column'
+        }}>
+            {/* Header */}
+            <header style={{ padding: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #222' }}>
+                <button
+                    onClick={() => navigate('/')}
                     style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-                        gap: '1.5rem',
-                        maxWidth: '1400px',
-                        marginBottom: '3rem'
+                        display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#666', fontSize: '0.9rem',
+                        background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold'
                     }}
                 >
-                    {exercises.map((exercise) => (
-                        <motion.div
-                            key={exercise.id}
-                            variants={itemVariants}
-                            whileHover={{ scale: 1.05, y: -5 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => handleExerciseSelect(exercise)}
-                            style={{
-                                cursor: 'pointer',
-                                background: exercise.gradient,
-                                borderRadius: '1.5rem',
-                                padding: '2rem',
-                                position: 'relative',
-                                overflow: 'hidden',
-                                border: selectedExercise?.id === exercise.id
-                                    ? `4px solid ${exercise.accentColor}`
-                                    : '2px solid rgba(255, 255, 255, 0.1)',
-                                boxShadow: selectedExercise?.id === exercise.id
-                                    ? `0 0 30px ${exercise.accentColor}`
-                                    : '0 4px 15px rgba(0, 0, 0, 0.3)',
-                                transition: 'all 0.3s ease',
-                            }}
-                        >
-                            {/* Content */}
-                            <div style={{ position: 'relative', zIndex: 1 }}>
-                                <h3 style={{
-                                    fontSize: '1.5rem',
-                                    fontWeight: '900',
-                                    color: '#000',
-                                    marginBottom: '0.5rem'
-                                }}>
-                                    {exercise.name}
-                                </h3>
-                                <div style={{
-                                    display: 'inline-block',
-                                    padding: '0.3rem 0.8rem',
-                                    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                                    borderRadius: '1rem',
-                                    fontSize: '0.8rem',
-                                    fontWeight: 'bold',
-                                    color: '#000',
-                                    marginBottom: '1rem'
-                                }}>
-                                    {exercise.difficulty}
-                                </div>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                                    {exercise.targetMuscles.map((muscle, idx) => (
-                                        <span
-                                            key={idx}
-                                            style={{
-                                                padding: '0.3rem 0.6rem',
-                                                backgroundColor: 'rgba(0, 0, 0, 0.15)',
-                                                borderRadius: '0.8rem',
-                                                fontSize: '0.75rem',
-                                                color: '#000',
-                                                fontWeight: '600',
-                                            }}
-                                        >
-                                            {muscle}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
+                    <ArrowLeft size={16} /> BACK
+                </button>
+                <div style={{ fontSize: '0.9rem', color: '#444', letterSpacing: '0.1em' }}>SELECT EXERCISE</div>
+            </header>
 
-                            {/* Selected Indicator */}
-                            {selectedExercise?.id === exercise.id && (
-                                <motion.div
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    style={{
-                                        position: 'absolute',
-                                        top: '1rem',
-                                        right: '1rem',
-                                        width: '30px',
-                                        height: '30px',
-                                        borderRadius: '50%',
-                                        backgroundColor: '#000',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        fontSize: '1.2rem',
-                                    }}
-                                >
-                                    ✓
-                                </motion.div>
-                            )}
-                        </motion.div>
-                    ))}
-                </motion.div>
-            </motion.div>
+            {/* List */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                {exercises.map((exercise) => (
+                    <ExerciseStrip
+                        key={exercise.id}
+                        exercise={exercise}
+                        isHovered={hoveredId === exercise.id}
+                        setHovered={setHoveredId}
+                        onSelect={setSelectedExercise}
+                    />
+                ))}
+            </div>
 
-            {/* Mode Selection Section - Only shows after exercise is selected */}
+            {/* Mode Selection Modal */}
             <AnimatePresence>
                 {selectedExercise && (
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: 'fixed',
+                            top: 0, left: 0, right: 0, bottom: 0,
+                            backgroundColor: 'rgba(0,0,0,0.8)',
+                            backdropFilter: 'blur(10px)',
+                            zIndex: 100,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '2rem'
+                        }}
+                        onClick={() => setSelectedExercise(null)}
                     >
-                        <motion.h1
-                            style={{ fontSize: '3rem', marginBottom: '1rem' }}
-                        >
-                            {selectedExercise.name} - CHOOSE YOUR <span style={{ color: 'var(--color-neon-green)' }}>MODE</span>
-                        </motion.h1>
-
                         <motion.div
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            onClick={e => e.stopPropagation()}
                             style={{
+                                width: '100%',
+                                maxWidth: '800px',
                                 display: 'grid',
-                                gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
-                                gap: '2rem',
-                                maxWidth: '1200px'
+                                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                                gap: '2rem'
                             }}
                         >
-                            <motion.div
-                                variants={itemVariants}
-                                whileHover={{ scale: 1.02, backgroundColor: '#1a1a1a' }}
+                            <div
                                 onClick={() => handleModeSelect('coach')}
                                 style={{
+                                    backgroundColor: '#111',
+                                    border: `1px solid ${selectedExercise.accentColor}`,
+                                    borderRadius: '1rem',
+                                    padding: '3rem',
                                     cursor: 'pointer',
-                                    padding: '4rem',
-                                    backgroundColor: 'var(--color-dark-gray)',
-                                    borderRadius: '2rem',
-                                    border: '2px solid transparent',
-                                    borderColor: 'var(--color-neon-purple)',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    justifyContent: 'space-between',
-                                    height: '400px'
+                                    alignItems: 'center',
+                                    gap: '1.5rem',
+                                    transition: 'transform 0.2s'
                                 }}
+                                onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.02)'}
+                                onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
                             >
-                                <div>
-                                    <Camera size={64} color="var(--color-neon-purple)" style={{ marginBottom: '2rem' }} />
-                                    <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>REAL-TIME COACH</h2>
-                                    <p style={{ fontSize: '1.2rem', color: '#aaa' }}>
-                                        Instant form correction using your webcam.
-                                    </p>
-                                </div>
-                                <div style={{ alignSelf: 'flex-end', fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-neon-purple)' }}>
-                                    START SESSION &rarr;
-                                </div>
-                            </motion.div>
+                                <Camera size={48} color={selectedExercise.accentColor} />
+                                <h2 style={{ fontSize: '1.5rem', margin: 0 }}>REAL-TIME COACH</h2>
+                            </div>
 
-                            <motion.div
-                                variants={itemVariants}
-                                whileHover={{ scale: 1.02, backgroundColor: '#1a1a1a' }}
+                            <div
                                 onClick={() => handleModeSelect('upload')}
                                 style={{
+                                    backgroundColor: '#111',
+                                    border: '1px solid #333',
+                                    borderRadius: '1rem',
+                                    padding: '3rem',
                                     cursor: 'pointer',
-                                    padding: '4rem',
-                                    backgroundColor: 'var(--color-dark-gray)',
-                                    borderRadius: '2rem',
-                                    border: '2px solid transparent',
-                                    borderColor: 'var(--color-neon-pink)',
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    justifyContent: 'space-between',
-                                    height: '400px'
+                                    alignItems: 'center',
+                                    gap: '1.5rem',
+                                    transition: 'transform 0.2s'
+                                }}
+                                onMouseEnter={e => {
+                                    e.currentTarget.style.transform = 'scale(1.02)';
+                                    e.currentTarget.style.borderColor = selectedExercise.accentColor;
+                                }}
+                                onMouseLeave={e => {
+                                    e.currentTarget.style.transform = 'scale(1)';
+                                    e.currentTarget.style.borderColor = '#333';
                                 }}
                             >
-                                <div>
-                                    <Video size={64} color="var(--color-neon-pink)" style={{ marginBottom: '2rem' }} />
-                                    <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>VIDEO ANALYSIS</h2>
-                                    <p style={{ fontSize: '1.2rem', color: '#aaa' }}>
-                                        Upload and analyze your workout videos.
-                                    </p>
-                                </div>
-                                <div style={{ alignSelf: 'flex-end', fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--color-neon-pink)' }}>
-                                    UPLOAD VIDEO &rarr;
-                                </div>
-                            </motion.div>
+                                <Video size={48} color="#666" />
+                                <h2 style={{ fontSize: '1.5rem', margin: 0, color: '#888' }}>VIDEO UPLOAD</h2>
+                            </div>
                         </motion.div>
                     </motion.div>
                 )}

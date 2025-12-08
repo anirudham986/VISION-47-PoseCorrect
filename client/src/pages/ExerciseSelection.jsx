@@ -7,7 +7,6 @@ const exercises = [
     {
         id: 'pushup',
         name: 'PUSH UP',
-        difficulty: 'Beginner',
         targetMuscles: ['Chest', 'Triceps', 'Shoulders'],
         gradient: 'linear-gradient(135deg, #ccff00 0%, #99cc00 100%)',
         accentColor: '#ccff00',
@@ -18,7 +17,6 @@ const exercises = [
     {
         id: 'pullup',
         name: 'PULL UP',
-        difficulty: 'Advanced',
         targetMuscles: ['Back', 'Biceps', 'Lats'],
         gradient: 'linear-gradient(135deg, #9900ff 0%, #6600cc 100%)',
         accentColor: '#9900ff',
@@ -29,7 +27,6 @@ const exercises = [
     {
         id: 'benchpress',
         name: 'BENCH PRESS',
-        difficulty: 'Intermediate',
         targetMuscles: ['Chest', 'Triceps', 'Shoulders'],
         gradient: 'linear-gradient(135deg, #ff0099 0%, #cc0077 100%)',
         accentColor: '#ff0099',
@@ -40,7 +37,6 @@ const exercises = [
     {
         id: 'squat',
         name: 'SQUAT',
-        difficulty: 'Intermediate',
         targetMuscles: ['Quads', 'Glutes', 'Hamstrings'],
         gradient: 'linear-gradient(135deg, #00ffcc 0%, #00cc99 100%)',
         accentColor: '#00ffcc',
@@ -51,7 +47,6 @@ const exercises = [
     {
         id: 'deadlift',
         name: 'DEADLIFT',
-        difficulty: 'Advanced',
         targetMuscles: ['Back', 'Glutes', 'Hamstrings'],
         gradient: 'linear-gradient(135deg, #ff6600 0%, #cc5200 100%)',
         accentColor: '#ff6600',
@@ -180,17 +175,7 @@ const ExerciseCard = ({ exercise, index, activeIndex, onSelect, onDismiss }) => 
 
                 {/* Middle Section */}
                 <div style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{
-                        display: 'inline-block',
-                        padding: '0.5rem 1rem',
-                        backgroundColor: 'rgba(0, 0, 0, 0.2)',
-                        borderRadius: '2rem',
-                        marginBottom: '1.5rem',
-                    }}>
-                        <span style={{ color: '#000', fontWeight: 'bold', fontSize: '0.9rem' }}>
-                            {exercise.difficulty}
-                        </span>
-                    </div>
+
 
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                         {exercise.targetMuscles.map((muscle, idx) => (
@@ -241,15 +226,6 @@ const ExerciseCard = ({ exercise, index, activeIndex, onSelect, onDismiss }) => 
 
                 {/* Animated Glow Effect */}
                 <motion.div
-                    animate={{
-                        opacity: [0.1, 0.2, 0.1],
-                        scale: [1, 1.05, 1],
-                    }}
-                    transition={{
-                        duration: 3,
-                        repeat: Infinity,
-                        ease: "easeInOut",
-                    }}
                     style={{
                         position: 'absolute',
                         top: '-50%',
@@ -258,6 +234,7 @@ const ExerciseCard = ({ exercise, index, activeIndex, onSelect, onDismiss }) => 
                         height: '200%',
                         background: `radial-gradient(circle, ${exercise.shadowColor} 0%, transparent 70%)`,
                         pointerEvents: 'none',
+                        opacity: 0.1,
                     }}
                 />
             </motion.div>

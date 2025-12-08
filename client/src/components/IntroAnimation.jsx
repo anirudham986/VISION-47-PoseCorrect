@@ -8,7 +8,7 @@ const IntroAnimation = ({ onComplete }) => {
             if (step < 3) {
                 setStep(step + 1);
             }
-        }, 1500);
+        }, 1000);
         return () => clearTimeout(timer);
     }, [step]);
 

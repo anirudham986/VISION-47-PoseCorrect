@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
 import { Volume2, VolumeX } from 'lucide-react';
 import IntroAnimation from './components/IntroAnimation';
 import LandingPage from './pages/LandingPage';
@@ -8,6 +9,7 @@ import RealTimeCoach from './pages/RealTimeCoach';
 import VideoAnalysis from './pages/VideoAnalysis';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Privacy from './pages/Privacy';
 import Navbar from './components/Navbar';
 
 const AppContent = () => {
@@ -17,21 +19,35 @@ const AppContent = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Attempt autoplay immediately
     audioRef.current = new Audio('/intro.mp3');
-    audioRef.current.volume = 0.2; // Low background volume
+    audioRef.current.volume = 0.2;
     audioRef.current.loop = true;
 
     const playAudio = async () => {
       try {
-        await audioRef.current.play();
+        if (audioRef.current) {
+          await audioRef.current.play();
+        }
       } catch (err) {
-        console.log("Autoplay prevented");
+        console.log("Autoplay prevented by browser:", err);
       }
     };
 
     playAudio();
 
+    // Fallback: Play on first interaction if blocked
+    const handleFirstClick = () => {
+      if (audioRef.current && audioRef.current.paused) {
+        audioRef.current.play().catch(e => console.log("Click play failed:", e));
+      }
+      window.removeEventListener('click', handleFirstClick);
+    };
+
+    window.addEventListener('click', handleFirstClick);
+
     return () => {
+      window.removeEventListener('click', handleFirstClick);
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
@@ -56,12 +72,16 @@ const AppContent = () => {
 
   return (
     <>
-      {showIntro && <IntroAnimation onComplete={handleIntroComplete} />}
+      <AnimatePresence mode="wait">
+        {showIntro && <IntroAnimation onComplete={handleIntroComplete} />}
+      </AnimatePresence>
+
       {!showIntro && (
         <Routes>
           <Route path="/" element={<><Navbar /><LandingPage onStart={handleStart} /></>} />
           <Route path="/about" element={<><Navbar /><About /></>} />
           <Route path="/contact" element={<><Navbar /><Contact /></>} />
+          <Route path="/privacy" element={<><Navbar /><Privacy /></>} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/coach" element={<RealTimeCoach />} />
           <Route path="/upload" element={<VideoAnalysis />} />
