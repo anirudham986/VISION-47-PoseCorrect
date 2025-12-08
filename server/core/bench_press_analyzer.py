@@ -220,8 +220,46 @@ def analyze_bench_press_video(video_path, output_path=None):
                 # Calculate key metrics
                 metrics = get_key_metrics(landmarks, width, height)
                 
-                if metrics['left_elbow'] is not None:
-                    current_angle_val = metrics['left_elbow']
+                # Determine which side to track based on visibility/validity
+                # Default to left if both are None (which shouldn't happen if landmarks exist)
+                track_side = "left" 
+                current_angle = metrics.get('left_elbow')
+                current_flare = metrics.get('left_elbow_flare')
+                
+                # If right arm is valid and (left is invalid OR right has better angle detection?)
+                # Simple logic: If one is None, use the other. If both valid, use the one closer to camera?
+                # For now, let's use the one with the more "active" angle or just default to left but switch if left is None
+                if metrics.get('right_elbow') is not None:
+                     if metrics.get('left_elbow') is None:
+                         track_side = "right"
+                         current_angle = metrics['right_elbow']
+                         current_flare = metrics['right_elbow_flare']
+                     else:
+                         # Both valid, check visibility if possible or use heuristic
+                         # If left elbow is suspiciously straight (180) constant, maybe it's occluded?
+                         # Let's stick to left unless it's None for now, but improving this might require visibility scores
+                         # Re-implementing with visibility check from landmarks would be better but requires signature change of get_key_metrics
+                         # Let's just check if ONE side is fulfilling the "rep" condition better?
+                         # Or just check both?
+                         
+                         # HYBRID APPROACH: Track BOTH. If EITHER completes a rep, count it.
+                         # But need to avoid double counting.
+                         # Let's stick to a robust "Best Side" selector.
+                         pass
+                
+                # Get visibility from landmarks directly to be robust
+                try:
+                    l_vis = (landmarks[11].visibility + landmarks[13].visibility + landmarks[15].visibility) / 3
+                    r_vis = (landmarks[12].visibility + landmarks[14].visibility + landmarks[16].visibility) / 3
+                    if r_vis > l_vis:
+                        track_side = "right"
+                        current_angle = metrics['right_elbow']
+                        current_flare = metrics['right_elbow_flare']
+                except:
+                    pass
+
+                if current_angle is not None:
+                    current_angle_val = current_angle
                     
                     # Track bar path
                     if metrics['wrist_x'] is not None:
@@ -229,7 +267,8 @@ def analyze_bench_press_video(video_path, output_path=None):
                     
                     # Detect bench press reps
                     # Starting position: arms extended (lockout)
-                    if not in_press and metrics['left_elbow'] > 160:
+                    # Relaxed threshold: > 150 degrees (was 160)
+                    if not in_press and current_angle > 150:
                         in_press = True
                         min_elbow_angle = 180
                         max_elbow_flare = 0
@@ -237,15 +276,17 @@ def analyze_bench_press_video(video_path, output_path=None):
                     
                     if in_press:
                         # Track minimum elbow angle (bottom of press)
-                        if metrics['left_elbow'] < min_elbow_angle:
-                            min_elbow_angle = metrics['left_elbow']
+                        if current_angle < min_elbow_angle:
+                            min_elbow_angle = current_angle
                         
                         # Track elbow flare
-                        if metrics['left_elbow_flare'] is not None and metrics['left_elbow_flare'] > max_elbow_flare:
-                            max_elbow_flare = metrics['left_elbow_flare']
+                        if current_flare is not None and current_flare > max_elbow_flare:
+                            max_elbow_flare = current_flare
                     
                     # Complete rep when returning to lockout
-                    if in_press and metrics['left_elbow'] > 160 and min_elbow_angle < 150:
+                    # Condition: Was in press, returned to > 150, and went deep enough (< 135)
+                    # We use 135 to prevent "micro-reps" from noise at the top position
+                    if in_press and current_angle > 150 and min_elbow_angle < 135:
                         in_press = False
                         rep_count += 1
                         
@@ -281,6 +322,12 @@ def analyze_bench_press_video(video_path, output_path=None):
     # Write using MoviePy
     if output_path and output_frames:
         try:
+            # Fix for Real Time Coach video speed
+            # If it's a recorded video, calculate FPS based on known 10s duration
+            if "recorded_video" in os.path.basename(video_path) and len(output_frames) > 0:
+                fps = len(output_frames) / 10.0
+                print(f"DEBUG: Detected Real Time Coach video. Corrected FPS: {fps}")
+            
             # Ensure FPS is valid
             if fps <= 0 or fps > 120:
                 fps = 30.0
