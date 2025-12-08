@@ -46,8 +46,11 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 def read_root():
     return {"message": "GymBro AI Backend is Running"}
 
+from fastapi import Request
+
 @app.post("/analyze")
 async def analyze_video(
+    request: Request,
     file: UploadFile = File(...), 
     exercise_type: str = Form("squat")
 ):
@@ -98,11 +101,12 @@ async def analyze_video(
              raise HTTPException(status_code=500, detail="Analysis failed to produce output video")
 
         # 4. Return the result
+        base_url = str(request.base_url).rstrip('/')
         return {
             "status": "success", 
             "original_file": file.filename, 
             "analyzed_file": output_filename,
-            "download_url": f"http://localhost:8000/download/{output_filename}",
+            "download_url": f"{base_url}/download/{output_filename}",
             "analysis_data": analysis_result
         }
 
@@ -110,9 +114,11 @@ async def analyze_video(
         print(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+from fastapi.responses import FileResponse
+
 @app.get("/download/{filename}")
 async def download_file(filename: str):
     file_path = os.path.join(OUTPUT_DIR, filename)
     if os.path.exists(file_path):
-        return FileResponse(file_path)
+        return FileResponse(file_path, media_type="video/mp4", filename=filename)
     raise HTTPException(status_code=404, detail="File not found")

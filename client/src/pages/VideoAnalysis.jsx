@@ -56,8 +56,10 @@ const VideoAnalysis = () => {
         formData.append('file', videoFile);
         formData.append('exercise_type', selectedExercise);
 
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
         try {
-            const response = await fetch('http://localhost:8000/analyze', {
+            const response = await fetch(`${API_URL}/analyze`, {
                 method: 'POST',
                 body: formData,
             });
