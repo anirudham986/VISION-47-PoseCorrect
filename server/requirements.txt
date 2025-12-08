@@ -7,7 +7,7 @@ Pillow>=9.5.0
 mediapipe>=0.10.8
 
 # Video Processing
-moviepy>=1.0.3
+moviepy>=1.0.3,<2.0.0
 scikit-video>=1.1.11
 
 # Data Processing & Analysis
