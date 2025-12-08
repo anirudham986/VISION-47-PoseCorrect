@@ -5,6 +5,9 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import RealTimeCoach from './pages/RealTimeCoach';
 import VideoAnalysis from './pages/VideoAnalysis';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Navbar from './components/Navbar';
 
 const AppContent = () => {
   const [showIntro, setShowIntro] = useState(true);
@@ -23,7 +26,9 @@ const AppContent = () => {
       {showIntro && <IntroAnimation onComplete={handleIntroComplete} />}
       {!showIntro && (
         <Routes>
-          <Route path="/" element={<LandingPage onStart={handleStart} />} />
+          <Route path="/" element={<><Navbar /><LandingPage onStart={handleStart} /></>} />
+          <Route path="/about" element={<><Navbar /><About /></>} />
+          <Route path="/contact" element={<><Navbar /><Contact /></>} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/coach" element={<RealTimeCoach />} />
           <Route path="/upload" element={<VideoAnalysis />} />

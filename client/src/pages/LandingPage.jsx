@@ -5,22 +5,7 @@ import { ArrowRight, Camera, Video } from 'lucide-react';
 const LandingPage = ({ onStart }) => {
     return (
         <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-black)', color: 'var(--color-white)' }}>
-            <nav style={{ padding: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2 style={{ fontSize: '1.5rem', color: 'var(--color-neon-green)' }}>GYMBRO</h2>
-                <button
-                    onClick={onStart}
-                    style={{
-                        padding: '0.8rem 1.5rem',
-                        backgroundColor: 'var(--color-white)',
-                        color: 'var(--color-black)',
-                        borderRadius: '2rem',
-                        fontWeight: 'bold',
-                        fontSize: '1rem'
-                    }}
-                >
-                    Launch App
-                </button>
-            </nav>
+
 
             <main style={{ padding: '4rem 2rem', maxWidth: '1200px', margin: '0 auto' }}>
                 <section style={{ textAlign: 'center', marginBottom: '8rem' }}>
