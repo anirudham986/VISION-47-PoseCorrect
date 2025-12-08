@@ -1,46 +1,62 @@
-# GYMBRO - AI Fitness Coach
+# GYMBRO - AI Fitness Coach 🏋️‍♂️🤖
 
 **Your Personal Trainer, Reimagined.**
 
-Gymbro is a next-generation fitness application that leverages AI to provide real-time form correction and professional video analysis. Designed with a high-energy "Spotify Wrapped" aesthetic, it makes professional coaching accessible to everyone, anywhere.
+Gymbro is a next-generation full-stack fitness application that leverages computer vision to provide professional-grade form analysis. Designed with a high-energy "Spotify Wrapped" aesthetic, it combines a sleek React frontend with a powerful Python AI backend to democratize fitness coaching.
 
 ![Gymbro Demo](assets/demo.webp)
 
-## 🚀 Features
+---
 
-### 🟢 Real-Time Coaching
-Turn your webcam into a personal trainer.
-- **Instant Feedback**: Get voice-guided corrections as you exercise (e.g., "Keep your back straight", "Lower your hips").
-- **Live Metrics**: Track your reps and form quality in real-time.
-- **Privacy First**: All processing happens locally on your device.
+## 🚀 Key Features
 
-### 📹 Video Analysis (Python Engine)
-Upload your workout videos for a deep dive using our advanced computer vision engine.
-- **Frame-by-Frame Breakdown**: Analyze your technique against professional standards.
-- **Detailed Insights**: Receive specific scores on spine alignment, joint angles, and stability.
-- **Skeleton Overlay**: Visualize your biomechanics with a color-coded skeletal tracking system.
+### 🟢 AI Video Analysis (Upload & Analyze)
+Upload your workout videos to get instant, frame-by-frame biomechanical analysis.
+*   **Squat Analyzer**: Checks for NSCA-standard depth (Hip crease below knee top) and torso alignment.
+*   **Deadlift Analyzer**: Tracks "Setup → Pull → Lockout" phases, ensuring back neutrality (40-50°) and full hip extension.
+*   **Push-Up Analyzer**: Monitors elbow angle (90°), shoulder position (45°), and hip sag.
+
+### 📊 Professional-Grade Feedback
+*   **Visual Overlays**: See your skeleton, joint angles, and error flags directly on the video.
+*   **Actionable Corrections**: "Sit back deeper," "Don't round your back," "Engage core."
+*   **Privacy First**: All processing happens locally on your machine.
 
 ### 🎨 Immersive Experience
-- **Kinetic Interface**: Smooth animations and transitions powered by `framer-motion`.
-- **Vibrant Design**: A dark mode aesthetic with neon accents (Neon Green, Pink, Purple) to keep you motivated.
-- **Interactive Dashboard**: Seamlessly switch between modes with a premium, app-like feel.
+*   **Kinetic Interface**: Smooth `framer-motion` animations.
+*   **Dark Mode Aesthetic**: A premium Neon Green/Pink design system.
 
 ---
 
-## 🛠️ Tech Stack
+## 🛠️ System Architecture
 
-### Frontend (Web Application)
-- **Framework**: React + Vite
-- **Styling**: Vanilla CSS (Custom Design System with CSS Variables)
-- **Animation**: Framer Motion
-- **Icons**: Lucide React
-- **Routing**: React Router DOM
+For a deep dive into how the Front-End, Back-End, and Computer Vision pipeline interact, read our detailed **[System Architecture Documentation](system_architecture.md)**.
 
-### AI & Computer Vision (Analysis Engine)
-- **Language**: Python 3.9+
-- **Vision**: OpenCV, MediaPipe
-- **Data Processing**: NumPy, Pandas
-- **Visualization**: Matplotlib
+**Tech Stack:**
+*   **Frontend**: React, Vite, Framer Motion
+*   **Backend**: Python, FastAPI, Uvicorn
+*   **AI Engine**: MediaPipe, OpenCV, MoviePy
+
+---
+
+## 📦 Installation & Quick Start
+
+You will need **two terminal windows** to run the full application.
+
+### Terminal 1: Frontend (The Interface)
+```bash
+cd client
+npm install
+npm run dev
+```
+👉 **Open Browser:** `http://localhost:5173`
+
+### Terminal 2: Backend (The AI Engine)
+```bash
+cd server  # Important: Run from inside /server directory
+pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+```
+👉 **API Status:** `http://localhost:8000`
 
 ---
 
@@ -48,73 +64,27 @@ Upload your workout videos for a deep dive using our advanced computer vision en
 
 ```bash
 VISION-47-PoseCorrect/
-├── client/                 # Frontend React Application
-│   ├── src/                # Source code (Components, Pages, Assets)
-│   ├── public/             # Static assets
-│   ├── index.html          # Entry point
-│   └── vite.config.js      # Vite configuration
-├── video_analyzer.py       # Standalone Python Video Analysis Script
-├── requirements.txt        # Python dependencies
-└── README.md               # Project Documentation
+├── client/                 # React Application
+│   └── src/                # UI Components & Pages
+├── server/                 # Python Backend
+│   ├── main.py             # API Entry Point
+│   ├── core/               # AI Analyzers (Squat, Deadlift, Pushup)
+│   ├── uploads/            # Temporary storage for inputs
+│   ├── outputs/            # Processed videos
+│   └── requirements.txt    # Python dependencies
+└── system_architecture.md  # Detailed Technical Docs
 ```
 
 ---
 
-## 📦 Installation & Setup
+## 🎮 How to Use
 
-### 1. Frontend Setup (Web App)
-The web interface allows users to interact with the coaching features.
-
-```bash
-# Navigate to the client directory
-cd client
-
-# Install Node dependencies
-npm install
-
-# Start the development server
-npm run dev
-```
-The app will open at `http://localhost:5173`.
-
-### 2. Backend Setup (AI Analysis Tool)
-To use the advanced video analysis script locally:
-
-```bash
-# Navigate to the root directory
-cd ..
-
-# (Optional) Create a virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install Python dependencies
-pip install -r requirements.txt
-```
-
----
-
-## 🎮 Usage
-
-### Running the Web App
-1. Open the web app in your browser (`http://localhost:5173`).
-2. Navigate to **"Real-Time Coach"** for webcam-based feedback.
-3. Explore the **"Dashboard"** for your workout history.
-
-### Running the Video Analyzer
-Use the Python script to analyze existing video files with detailed skeletal tracking.
-
-```bash
-# Basic usage
-python video_analyzer.py
-
-# Or specify a video file directly
-python video_analyzer.py path/to/your/video.mp4
-```
-**Controls:**
-- `Q`: Quit analysis
-- `P`: Pause/Resume
-- `S`: Save screenshot
+1.  **Start Both Servers** (see above).
+2.  Go to the **Dashboard** in the web app.
+3.  Select **"Video Analysis"**.
+4.  Choose your exercise (e.g., Squat).
+5.  Drag & Drop your video file.
+6.  **Watch the magic:** The AI will process your video and return a highlighted version with a detailed report card.
 
 ---
 
@@ -131,6 +101,7 @@ Built by students from **RV College of Engineering, Bangalore**.
 ---
 
 ## 🤝 Contributing
+
 We welcome contributions! Please feel free to submit a Pull Request.
 
 1. Fork the Project
