@@ -1,0 +1,25 @@
+# System
+.DS_Store
+__pycache__/
+*.py[cod]
+
+# Node
+node_modules/
+dist/
+build/
+.env
+.env.local
+
+# Python
+venv/
+env/
+.venv/
+server/uploads/
+server/outputs/
+*.mp4
+*.avi
+*.mov
+
+# IDE
+.vscode/
+.idea/

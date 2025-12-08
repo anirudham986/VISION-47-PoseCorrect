@@ -124,16 +124,19 @@ EXERCISE_BIOMECHANICS = {
         "common_errors": {
             "rounded_back": {
                 "threshold": 170,
+                "condition": "less_than",
                 "message": "BACK ROUNDED! Straighten immediately - INJURY RISK",
                 "severity": "critical"
             },
             "hips_too_low": {
                 "threshold": 60,
+                "condition": "greater_than",
                 "message": "Hips too low - you're squatting, not deadlifting",
                 "severity": "danger"
             },
             "hips_too_high": {
                 "threshold": 30,
+                "condition": "less_than",
                 "message": "Hips too high - excessive stress on lower back",
                 "severity": "danger"
             }
@@ -239,23 +242,133 @@ EXERCISE_BIOMECHANICS = {
         },
         "camera_angle": "side",
         "reps_phase": "bottom_position"
+    },
+
+    "pushup": {
+        "description": "Upper body pushing exercise",
+        "key_joints": ["elbow", "shoulder", "torso", "hip"],
+        "ideal_angles": {
+            "elbow": {
+                "range": (80, 100),
+                "ideal": 90,
+                "measurement_notes": "Elbows at 90 degrees at bottom",
+                "critical": True
+            },
+            "torso": {
+                "range": (170, 190),
+                "ideal": 180,
+                "measurement_notes": "Straight line from shoulder to ankle",
+                "critical": True
+            }
+        },
+        "common_errors": {
+            "hip_sag": {
+                "threshold": 160,
+                "condition": "less_than",
+                "message": "Hips sagging/dropping - Engage core",
+                "severity": "warning"
+            },
+            "insufficient_depth": {
+                "threshold": 100,
+                "condition": "greater_than",
+                "message": "Not going deep enough",
+                "severity": "warning"
+            }
+        },
+        "camera_angle": "side",
+        "reps_phase": "bottom_position"
+    },
+
+    "pullup": {
+        "description": "Upper body pulling exercise",
+        "key_joints": ["elbow", "shoulder"],
+        "ideal_angles": {
+            "elbow_bottom": {
+                "range": (160, 180),
+                "ideal": 175,
+                "measurement_notes": "Full extension at bottom",
+                "critical": True
+            }
+        },
+        "common_errors": {
+            "partial_rep": {
+                "threshold": 150,
+                "condition": "less_than",
+                "message": "Not fully extending arms at bottom",
+                "severity": "warning"
+            }
+        },
+        "camera_angle": "back",
+        "reps_phase": "bottom_position"
+    },
+
+    "bench_press": {
+        "description": "Compound pushing exercise",
+        "key_joints": ["elbow", "shoulder"],
+        "ideal_angles": {
+            "elbow_bottom": {
+                "range": (45, 75),
+                "ideal": 60,
+                "measurement_notes": "Elbows tucked, bar touches chest (angle depends on grip)",
+                "critical": False
+            },
+            "elbow_top": {
+                "range": (170, 180),
+                "ideal": 180,
+                "measurement_notes": "Full lockout at top",
+                "critical": True
+            }
+        },
+        "common_errors": {
+            "flared_elbows": {
+                "threshold": 90,
+                "condition": "greater_than",
+                "message": "Elbows flared too wide (>90°) - Shoulder risk",
+                "severity": "danger"
+            }
+        },
+        "camera_angle": "side/front",
+        "reps_phase": "bottom_position"
     }
 }
 
 # Helper functions
 def get_exercise_angles(exercise_name):
     """Get ideal angles for specific exercise"""
-    if exercise_name not in EXERCISE_BIOMECHANICS:
-        raise ValueError(f"Exercise '{exercise_name}' not in database")
+    # Map common names to keys
+    mapping = {
+        "squat": "weighted_squats",
+        "pushup": "pushup",
+        "pullup": "pullup",
+        "deadlift": "deadlift",
+        "benchpress": "bench_press",
+        "bench_press": "bench_press"
+    }
     
-    return EXERCISE_BIOMECHANICS[exercise_name]["ideal_angles"]
+    key = mapping.get(exercise_name, exercise_name)
+    
+    if key not in EXERCISE_BIOMECHANICS:
+        return {} # Safe fallback
+    
+    return EXERCISE_BIOMECHANICS[key]["ideal_angles"]
 
 def get_exercise_errors(exercise_name):
     """Get common errors for specific exercise"""
-    if exercise_name not in EXERCISE_BIOMECHANICS:
-        raise ValueError(f"Exercise '{exercise_name}' not in database")
+    mapping = {
+        "squat": "weighted_squats",
+        "pushup": "pushup",
+        "pullup": "pullup",
+        "deadlift": "deadlift",
+        "benchpress": "bench_press",
+        "bench_press": "bench_press"
+    }
     
-    return EXERCISE_BIOMECHANICS[exercise_name]["common_errors"]
+    key = mapping.get(exercise_name, exercise_name)
+    
+    if key not in EXERCISE_BIOMECHANICS:
+        return {}
+    
+    return EXERCISE_BIOMECHANICS[key]["common_errors"]
 
 def list_exercises():
     """List all available exercises"""
@@ -263,7 +376,12 @@ def list_exercises():
 
 def get_exercise_details(exercise_name):
     """Get all details for an exercise"""
-    if exercise_name not in EXERCISE_BIOMECHANICS:
+    mapping = {
+        "squat": "weighted_squats"
+    }
+    key = mapping.get(exercise_name, exercise_name)
+    
+    if key not in EXERCISE_BIOMECHANICS:
         return None
     
-    return EXERCISE_BIOMECHANICS[exercise_name]
+    return EXERCISE_BIOMECHANICS[key]

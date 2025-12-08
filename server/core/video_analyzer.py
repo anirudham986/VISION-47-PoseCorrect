@@ -74,7 +74,8 @@ def analyze_video_with_skeleton(video_path, output_video=None, show_preview=True
         os.makedirs(os.path.dirname(output_video) if os.path.dirname(output_video) else '.', exist_ok=True)
         
         # Define codec and create VideoWriter
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # or 'XVID' for avi
+        # Use avc1 for better browser/macOS compatibility
+        fourcc = cv2.VideoWriter_fourcc(*'avc1') 
         out = cv2.VideoWriter(output_video, fourcc, fps, (width, height))
         print(f"💾 Will save analyzed video to: {output_video}")
     
