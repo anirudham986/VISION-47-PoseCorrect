@@ -1,15 +1,8 @@
-```javascript
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const IntroAnimation = ({ onComplete }) => {
     const [step, setStep] = useState(0);
-    const audioRef = useRef(new Audio('/intro.mp3'));
-
-    // Configuration
-    const START_TIME = 0;
-    const DURATION = 3;
-
     useEffect(() => {
         const timer = setTimeout(() => {
             if (step < 3) {
@@ -19,42 +12,6 @@ const IntroAnimation = ({ onComplete }) => {
         return () => clearTimeout(timer);
     }, [step]);
 
-    useEffect(() => {
-        audioRef.current.volume = 0.5;
-        audioRef.current.currentTime = START_TIME;
-
-        const playAudio = async () => {
-            try {
-                await audioRef.current.play();
-                
-                if (DURATION) {
-                    setTimeout(() => {
-                        if (audioRef.current) {
-                            const fadeOut = setInterval(() => {
-                                if (audioRef.current.volume > 0.05) {
-                                    audioRef.current.volume -= 0.05;
-                                } else {
-                                    audioRef.current.pause();
-                                    clearInterval(fadeOut);
-                                }
-                            }, 50);
-                        }
-                    }, DURATION * 1000);
-                }
-            } catch (err) {
-                console.error("Autoplay prevented by browser:", err);
-                // Fallback: We could show a "Unmute" button here if needed, 
-                // but for now we just log it as per user request for "instant" start.
-            }
-        };
-
-        playAudio();
-
-        return () => {
-            audioRef.current.pause();
-            audioRef.current.currentTime = 0;
-        };
-    }, []);
 
     const variants = {
         initial: { scale: 0.8, opacity: 0 },
@@ -89,17 +46,17 @@ const IntroAnimation = ({ onComplete }) => {
         >
             <AnimatePresence mode="wait">
                 {step === 0 && (
-                    <motion.h1 key="step1" variants={variants} initial="initial" animate="animate" exit="exit" style={{ fontSize: '5rem', color: 'var(--color-white)' }}>
+                    <motion.h1 key="step1" variants={variants} initial="initial" animate="animate" exit="exit" style={{ fontSize: 'clamp(3rem, 15vw, 6rem)', color: 'var(--color-white)' }}>
                         YOUR
                     </motion.h1>
                 )}
                 {step === 1 && (
-                    <motion.h1 key="step2" variants={variants} initial="initial" animate="animate" exit="exit" style={{ fontSize: '5rem', color: 'var(--color-black)' }}>
+                    <motion.h1 key="step2" variants={variants} initial="initial" animate="animate" exit="exit" style={{ fontSize: 'clamp(3rem, 15vw, 6rem)', color: 'var(--color-black)' }}>
                         FITNESS
                     </motion.h1>
                 )}
                 {step === 2 && (
-                    <motion.h1 key="step3" variants={variants} initial="initial" animate="animate" exit="exit" style={{ fontSize: '5rem', color: 'var(--color-black)' }}>
+                    <motion.h1 key="step3" variants={variants} initial="initial" animate="animate" exit="exit" style={{ fontSize: 'clamp(2.5rem, 12vw, 5rem)', color: 'var(--color-black)' }}>
                         REIMAGINED
                     </motion.h1>
                 )}
