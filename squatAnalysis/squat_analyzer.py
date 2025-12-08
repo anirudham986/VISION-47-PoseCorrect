@@ -41,18 +41,18 @@ def analyze_squat_video(video_path):
     Main analysis function - shows live preview and gives feedback
     """
     print("=" * 60)
-    print("⚡ QUICK SQUAT ANALYZER - LIVE PREVIEW + FEEDBACK")
+    print("QUICK SQUAT ANALYZER - LIVE PREVIEW + FEEDBACK")
     print("=" * 60)
     
     # Check video file
     if not os.path.exists(video_path):
-        print(f"❌ Video not found: {video_path}")
+        print(f"Video not found: {video_path}")
         return
     
     # Open video
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        print("❌ Cannot open video")
+        print("Cannot open video")
         return
     
     # Get video info
@@ -61,11 +61,11 @@ def analyze_squat_video(video_path):
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     
-    print(f"📹 Video: {os.path.basename(video_path)}")
-    print(f"📐 Resolution: {width}x{height}")
-    print(f"⏱️  Duration: {total_frames/fps:.1f}s")
+    print(f"Video: {os.path.basename(video_path)}")
+    print(f"Resolution: {width}x{height}")
+    print(f"Duration: {total_frames/fps:.1f}s")
     print("-" * 60)
-    print("▶️  Starting live analysis...")
+    print("Starting live analysis...")
     print("   Press 'Q' to quit | 'S' to screenshot | 'P' to pause")
     print("-" * 60)
     
@@ -152,13 +152,13 @@ def analyze_squat_video(video_path):
                 image = add_info_panel(image, frame_count, total_frames, fps, rep_count, min_knee_angle)
                 
                 # Show live preview
-                cv2.imshow('🏋️‍♂️ LIVE SQUAT ANALYSIS - Press Q to quit', image)
+                cv2.imshow('LIVE SQUAT ANALYSIS - Press Q to quit', image)
             
             # Handle keys
             key = cv2.waitKey(1 if not paused else 0) & 0xFF
             
             if key == ord('q') or key == 27:
-                print("\n⏹️  Stopping analysis...")
+                print("\nStopping analysis...")
                 break
             elif key == ord('p'):
                 paused = not paused
@@ -174,7 +174,7 @@ def analyze_squat_video(video_path):
     
     # Generate and display feedback
     print("\n" + "=" * 60)
-    print("📊 ANALYSIS COMPLETE - GENERATING FEEDBACK")
+    print("ANALYSIS COMPLETE - GENERATING FEEDBACK")
     print("=" * 60)
     
     generate_feedback(rep_data, all_angles, video_path)
@@ -305,7 +305,7 @@ def generate_feedback(rep_data, all_angles, video_path):
     """Generate comprehensive feedback based on analysis"""
     
     if not rep_data:
-        print("\n❌ NO SQUATS DETECTED!")
+        print("\nNO SQUATS DETECTED!")
         print("\nPossible reasons:")
         print("1. Camera angle - side view works best")
         print("2. Full body not visible")
@@ -313,11 +313,11 @@ def generate_feedback(rep_data, all_angles, video_path):
         print("4. Try a different video")
         return
     
-    print(f"\n✅ DETECTED {len(rep_data)} SQUAT REPS")
+    print(f"\nDETECTED {len(rep_data)} SQUAT REPS")
     print("-" * 60)
     
     # Analyze each rep
-    print("\n📋 REP-BY-REP ANALYSIS:")
+    print("\nREP-BY-REP ANALYSIS:")
     print("-" * 40)
     
     for i, rep in enumerate(rep_data, 1):
@@ -340,7 +340,7 @@ def generate_feedback(rep_data, all_angles, video_path):
         min_angle = min([rep["min_angle"] for rep in rep_data])
         max_angle = max([rep["min_angle"] for rep in rep_data])
         
-        print("\n📊 OVERALL STATISTICS:")
+        print("\nOVERALL STATISTICS:")
         print("-" * 40)
         print(f"   Average Knee Angle: {avg_knee_angle:.1f}°")
         print(f"   Best Depth: {min_angle}°")
@@ -351,68 +351,68 @@ def generate_feedback(rep_data, all_angles, video_path):
         print(f"   Consistency: {consistency:.1f}%")
     
     print("\n" + "=" * 60)
-    print("💡 NSCA-BASED FORM FEEDBACK")
+    print("NSCA-BASED FORM FEEDBACK")
     print("=" * 60)
     
     # Generate personalized feedback
     if rep_data:
         avg_depth = np.mean([rep["min_angle"] for rep in rep_data])
         
-        print("\n🎯 KEY FINDINGS:")
+        print("\nKEY FINDINGS:")
         print("-" * 40)
         
         if avg_depth > 100:
-            print("🔴 PRIMARY ISSUE: INSUFFICIENT DEPTH")
+            print("PRIMARY ISSUE: INSUFFICIENT DEPTH")
             print("   • You're not reaching parallel")
             print("   • NSCA standard requires 90° knee angle")
             print("   • Current average: {:.1f}°".format(avg_depth))
             
-            print("\n🛠️  IMMEDIATE FIXES:")
+            print("\nIMMEDIATE FIXES:")
             print("   1. Practice with a box or bench")
             print("   2. Focus on 'sit back' not 'sit down'")
             print("   3. Try goblet squats with lighter weight")
             print("   4. Improve ankle mobility")
             
         elif 85 <= avg_depth <= 100:
-            print("✅ GOOD: MEETS NSCA STANDARD")
+            print("GOOD: MEETS NSCA STANDARD")
             print("   • You're reaching parallel or below")
             print("   • NSCA standard: 90° knee angle")
             print("   • Your average: {:.1f}°".format(avg_depth))
             
-            print("\n🚀 NEXT-LEVEL IMPROVEMENTS:")
+            print("\nNEXT-LEVEL IMPROVEMENTS:")
             print("   1. Work on depth consistency")
             print("   2. Add pause squats for strength")
             print("   3. Increase weight gradually")
             print("   4. Film from front to check knee alignment")
             
         else:  # avg_depth < 85
-            print("⚠️  EXCELLENT: BELOW PARALLEL")
+            print("EXCELLENT: BELOW PARALLEL")
             print("   • You're going deeper than required")
             print("   • NSCA standard: 90° knee angle")
             print("   • Your average: {:.1f}°".format(avg_depth))
             
-            print("\n💪 STRENGTH FOCUS:")
+            print("\nSTRENGTH FOCUS:")
             print("   1. Maintain control at bottom")
             print("   2. Ensure knees don't cave inward")
             print("   3. Consider competition-style training")
             print("   4. Monitor for 'butt wink'")
     
-    print("\n📋 NSCA TECHNICAL CHECKLIST:")
+    print("\nNSCA TECHNICAL CHECKLIST:")
     print("-" * 40)
     checkboxes = [
-        ("Feet shoulder-width apart", "✅"),
-        ("Knees track over toes", "✅"),
-        ("Chest stays up", "✅"),
-        ("Back remains straight", "✅"),
-        ("Hips below knees at bottom", "✅" if avg_depth <= 90 else "⚠️"),
-        ("Weight on heels/midfoot", "✅"),
-        ("Controlled descent/ascent", "✅"),
+        ("Feet shoulder-width apart", "CORRECT"),
+        ("Knees track over toes", "CORRECT"),
+        ("Chest stays up", "CORRECT"),
+        ("Back remains straight", "CORRECT"),
+        ("Hips below knees at bottom", "CORRECT" if avg_depth <= 90 else "IMPROVE"),
+        ("Weight on heels/midfoot", "CORRECT"),
+        ("Controlled descent/ascent", "CORRECT"),
     ]
     
     for item, status in checkboxes:
         print(f"   {status} {item}")
     
-    print("\n🔧 RECOMMENDED DRILLS:")
+    print("\nRECOMMENDED DRILLS:")
     print("-" * 40)
     drills = [
         "1. Box Squats - for depth practice",
@@ -429,7 +429,7 @@ def generate_feedback(rep_data, all_angles, video_path):
     save_quick_report(rep_data, video_path, avg_depth if 'avg_depth' in locals() else None)
     
     print("\n" + "=" * 60)
-    print("🎯 ANALYSIS COMPLETE")
+    print("ANALYSIS COMPLETE")
     print("=" * 60)
 
 def save_quick_report(rep_data, video_path, avg_depth):
@@ -473,7 +473,7 @@ def save_quick_report(rep_data, video_path, avg_depth):
         f.write("✓ Neutral spine\n")
         f.write("✓ Controlled tempo\n")
     
-    print(f"\n💾 Quick report saved: {filename}")
+    print(f"\nQuick report saved: {filename}")
 
 # Simple main function - no questions, just run
 if __name__ == "__main__":
@@ -488,7 +488,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         video_path = sys.argv[1]
         if not os.path.exists(video_path):
-            print(f"❌ Video not found: {video_path}")
+            print(f"Video not found: {video_path}")
             video_path = None
     
     # If no command line arg, look in current directory
@@ -499,10 +499,10 @@ if __name__ == "__main__":
                 break
     
     if video_path:
-        print(f"🎬 Found video: {video_path}")
+        print(f"Found video: {video_path}")
         analyze_squat_video(video_path)
     else:
-        print("❌ No video file found!")
+        print("No video file found!")
         print("\nPlease either:")
         print("1. Place a video file in this folder")
         print("2. Run: python squat_analyzer.py your_video.mp4")
