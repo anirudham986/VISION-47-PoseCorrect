@@ -162,11 +162,11 @@ def analyze_squat_video(video_path):
                 break
             elif key == ord('p'):
                 paused = not paused
-                print(f"   {'⏸️  Paused' if paused else '▶️  Resumed'}")
+                print(f"   {'Paused' if paused else 'Resumed'}")
             elif key == ord('s'):
                 screenshot = f"squat_frame_{frame_count}.jpg"
                 cv2.imwrite(screenshot, image)
-                print(f"   📸 Saved: {screenshot}")
+                print(f"Saved: {screenshot}")
     
     # Cleanup
     cap.release()
