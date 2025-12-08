@@ -208,11 +208,29 @@ const VideoAnalysis = () => {
                                             borderRadius: '1rem',
                                             textAlign: 'center'
                                         }}>
-                                            <h4 style={{ color: '#888', marginBottom: '0.5rem' }}>AVG DEPTH</h4>
+                                            <h4 style={{ color: '#888', marginBottom: '0.5rem' }}>
+                                                {selectedExercise === 'pullup' ? 'AVG EXTENSION' :
+                                                    selectedExercise === 'deadlift' ? 'HIP EXTENSION' :
+                                                        'AVG DEPTH'}
+                                            </h4>
                                             <p style={{
                                                 fontSize: '2.5rem',
                                                 fontWeight: 'bold',
-                                                color: result.analysis_data.avg_depth >= 80 ? 'var(--color-neon-green)' : 'var(--color-neon-pink)'
+                                                // Dynamic Color Logic based on Exercise Biomechanics
+                                                color: (() => {
+                                                    const val = result.analysis_data.avg_depth;
+                                                    // Higher is Better: Pullup (Extension), Deadlift (Lockout)
+                                                    if (['pullup', 'deadlift'].includes(selectedExercise)) {
+                                                        return val >= 160 ? 'var(--color-neon-green)' : 'var(--color-neon-pink)';
+                                                    }
+                                                    // Lower is Better: Squat (Knee flexion), Pushup (Elbow flexion), Bench
+                                                    if (['squat', 'pushup', 'benchpress'].includes(selectedExercise)) {
+                                                        // Wait, squat depth rating: < 80 is deep (good?), > 100 is shallow (bad)
+                                                        // Pushup: < 80 is excellent, > 100 is shallow
+                                                        return val <= 100 ? 'var(--color-neon-green)' : 'var(--color-neon-pink)';
+                                                    }
+                                                    return '#fff';
+                                                })()
                                             }}>
                                                 {result.analysis_data.avg_depth}°
                                             </p>

@@ -91,17 +91,31 @@ def analyze_deadlift_video(video_path, output_path=None):
             print(f"Error writing video: {e}")
             return {"error": str(e)}
     
+    avg_lockout = 0
+    # Calculate avg lockout (max angles achieved)
+    # Simplified: Top 20% of angles likely represent lockout
+    if back_angles:
+        # Filter for high values (lockout phase)
+        lockout_angles = [a for a in back_angles if a > 150]
+        if lockout_angles:
+            avg_lockout = int(np.mean(lockout_angles))
+    
     if rep_count > 0:
-        feedback.append("Good Hinge Movement")
-        corrections.append("Keep your back flat and chest up.")
+        if avg_lockout < 165:
+            feedback.append("Incomplete Lockout")
+            corrections.append("Squeeze your glutes to fully extend hips at top.")
+        else:
+            feedback.append("Good Lockout")
+            corrections.append("Solid hip extension.")
     else:
-        feedback.append("No Full Reps")
-        corrections.append("Ensure you stand up fully to lock out the hips.")
+        feedback.append("No Reps Detected")
+        corrections.append("Ensure you stand up fully.")
 
     return {
         "reps_count": rep_count,
-        "avg_depth": 0, 
+        "avg_depth": int(avg_lockout), 
         "feedback": feedback,
         "corrections": corrections,
         "rep_details": []
     }
+```
