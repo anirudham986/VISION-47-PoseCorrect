@@ -12,109 +12,89 @@ import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
 import Navbar from './components/Navbar';
 
-const AppContent = () => {
-  const [showIntro, setShowIntro] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
-  const audioRef = useRef(null);
-  const navigate = useNavigate();
+useEffect(() => {
+  audioRef.current = new Audio('/intro.mp3');
+  audioRef.current.volume = 0.2;
+  audioRef.current.loop = true;
 
-  useEffect(() => {
-    // Attempt autoplay immediately
-    audioRef.current = new Audio('/intro.mp3');
-    audioRef.current.volume = 0.2;
-    audioRef.current.loop = true;
-
-    const playAudio = async () => {
-      try {
-        if (audioRef.current) {
-          await audioRef.current.play();
-        }
-      } catch (err) {
-        console.log("Autoplay prevented by browser:", err);
-      }
-    };
-
-    playAudio();
-
-    // Fallback: Play on first interaction if blocked
-    const handleFirstClick = () => {
-      if (audioRef.current && audioRef.current.paused) {
-        audioRef.current.play().catch(e => console.log("Click play failed:", e));
-      }
-      window.removeEventListener('click', handleFirstClick);
-    };
-
-    window.addEventListener('click', handleFirstClick);
-
-    return () => {
-      window.removeEventListener('click', handleFirstClick);
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
-      }
-    };
-  }, []);
-
-  const toggleMute = () => {
+  return () => {
     if (audioRef.current) {
-      audioRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+      audioRef.current.pause();
+      audioRef.current = null;
     }
   };
+}, []);
 
-  const handleIntroComplete = () => {
-    setShowIntro(false);
-  };
+const startAudio = async () => {
+  try {
+    if (audioRef.current && audioRef.current.paused) {
+      await audioRef.current.play();
+    }
+  } catch (err) {
+    console.log("Audio play failed:", err);
+  }
+};
 
-  const handleStart = () => {
-    navigate('/dashboard');
-  };
+const toggleMute = () => {
+  if (audioRef.current) {
+    audioRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  }
+};
 
-  return (
-    <>
-      <AnimatePresence mode="wait">
-        {showIntro && <IntroAnimation onComplete={handleIntroComplete} />}
-      </AnimatePresence>
+const handleIntroComplete = () => {
+  setShowIntro(false);
+};
 
-      {!showIntro && (
-        <Routes>
-          <Route path="/" element={<><Navbar /><LandingPage onStart={handleStart} /></>} />
-          <Route path="/about" element={<><Navbar /><About /></>} />
-          <Route path="/contact" element={<><Navbar /><Contact /></>} />
-          <Route path="/privacy" element={<><Navbar /><Privacy /></>} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/coach" element={<RealTimeCoach />} />
-          <Route path="/upload" element={<VideoAnalysis />} />
-        </Routes>
-      )}
+const handleStart = () => {
+  navigate('/dashboard');
+};
 
-      {/* Global Audio Control */}
-      <button
-        onClick={toggleMute}
-        style={{
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          zIndex: 9999,
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          border: '1px solid #333',
-          borderRadius: '50%',
-          width: '50px',
-          height: '50px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          cursor: 'pointer',
-          color: 'var(--color-neon-green, #0f0)',
-          transition: 'all 0.3s ease'
-        }}
-        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-      >
-        {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
-      </button>
-    </>
-  );
+return (
+  <>
+    <AnimatePresence mode="wait">
+      {showIntro && <IntroAnimation onComplete={handleIntroComplete} onStart={startAudio} />}
+    </AnimatePresence>
+
+    {!showIntro && (
+      <Routes>
+        <Route path="/" element={<><Navbar /><LandingPage onStart={handleStart} /></>} />
+        <Route path="/about" element={<><Navbar /><About /></>} />
+        <Route path="/contact" element={<><Navbar /><Contact /></>} />
+        <Route path="/privacy" element={<><Navbar /><Privacy /></>} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/coach" element={<RealTimeCoach />} />
+        <Route path="/upload" element={<VideoAnalysis />} />
+      </Routes>
+    )}
+
+    {/* Global Audio Control */}
+    <button
+      onClick={toggleMute}
+      style={{
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        zIndex: 9999,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        border: '1px solid #333',
+        borderRadius: '50%',
+        width: '50px',
+        height: '50px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        color: 'var(--color-neon-green, #0f0)',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+    >
+      {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+    </button>
+  </>
+);
 };
 
 const App = () => {

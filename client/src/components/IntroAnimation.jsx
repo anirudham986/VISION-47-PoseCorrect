@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const IntroAnimation = ({ onComplete }) => {
-    const [step, setStep] = useState(0);
+const IntroAnimation = ({ onComplete, onStart }) => {
+    const [step, setStep] = useState(-1); // Start at -1 (Click to Start)
+
     useEffect(() => {
-        const timer = setTimeout(() => {
-            if (step < 3) {
+        if (step >= 0 && step < 3) {
+            const timer = setTimeout(() => {
                 setStep(step + 1);
-            }
-        }, 1000);
-        return () => clearTimeout(timer);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
     }, [step]);
 
 
@@ -26,6 +27,15 @@ const IntroAnimation = ({ onComplete }) => {
         'var(--color-neon-purple)' // Step 3: READY?
     ];
 
+    const handleInteraction = () => {
+        if (step === -1) {
+            if (onStart) onStart();
+            setStep(0);
+        } else if (step >= 3) {
+            onComplete();
+        }
+    };
+
     return (
         <motion.div
             className="intro-container"
@@ -35,16 +45,22 @@ const IntroAnimation = ({ onComplete }) => {
                 left: 0,
                 width: '100vw',
                 height: '100vh',
-                backgroundColor: bgColors[step] || 'var(--color-black)',
+                backgroundColor: step === -1 ? 'var(--color-black)' : (bgColors[step] || 'var(--color-black)'),
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
                 zIndex: 9999,
-                cursor: step >= 3 ? 'pointer' : 'default'
+                cursor: 'pointer'
             }}
-            onClick={() => step >= 3 && onComplete()}
+            onClick={handleInteraction}
         >
             <AnimatePresence mode="wait">
+                {step === -1 && (
+                    <motion.div key="start" variants={variants} initial="initial" animate="animate" exit="exit" style={{ textAlign: 'center' }}>
+                        <h1 style={{ fontSize: '2rem', color: '#fff', marginBottom: '1rem', letterSpacing: '4px' }}>GYMBRO AI</h1>
+                        <p style={{ color: 'var(--color-neon-green)', fontSize: '1.2rem', animation: 'pulse 1.5s infinite' }}>CLICK TO START</p>
+                    </motion.div>
+                )}
                 {step === 0 && (
                     <motion.h1 key="step1" variants={variants} initial="initial" animate="animate" exit="exit" style={{ fontSize: 'clamp(3rem, 15vw, 6rem)', color: 'var(--color-white)' }}>
                         YOUR
@@ -67,6 +83,13 @@ const IntroAnimation = ({ onComplete }) => {
                     </motion.div>
                 )}
             </AnimatePresence>
+            <style>{`
+                @keyframes pulse {
+                    0% { opacity: 0.5; }
+                    50% { opacity: 1; }
+                    100% { opacity: 0.5; }
+                }
+            `}</style>
         </motion.div>
     );
 };
