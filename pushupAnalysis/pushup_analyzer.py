@@ -57,13 +57,13 @@ def analyze_pushup_video(video_path):
     
     # Check video file
     if not os.path.exists(video_path):
-        print(f"❌ Video not found: {video_path}")
+        print(f"Video not found: {video_path}")
         return
     
     # Open video
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        print("❌ Cannot open video")
+        print("Cannot open video")
         return
     
     # Get video info
@@ -178,15 +178,15 @@ def analyze_pushup_video(video_path):
             key = cv2.waitKey(1 if not paused else 0) & 0xFF
             
             if key == ord('q') or key == 27:
-                print("\n⏹️  Stopping analysis...")
+                print("\nStopping analysis...")
                 break
             elif key == ord('p'):
                 paused = not paused
-                print(f"   {'⏸️  Paused' if paused else '▶️  Resumed'}")
+                print(f"{'Paused' if paused else 'Resumed'}")
             elif key == ord('s'):
                 screenshot = f"pushup_frame_{frame_count}.jpg"
                 cv2.imwrite(screenshot, image)
-                print(f"   📸 Saved: {screenshot}")
+                print(f"Saved: {screenshot}")
     
     # Cleanup
     cap.release()
@@ -363,7 +363,7 @@ def generate_feedback(rep_data, all_angles, video_path):
     """Generate comprehensive feedback based on analysis"""
     
     if not rep_data:
-        print("\n❌ NO PUSH-UPS DETECTED!")
+        print("\nNO PUSH-UPS DETECTED!")
         print("\nPossible reasons:")
         print("1. Side view works best for analysis")
         print("2. Full body not visible in frame")
@@ -371,7 +371,7 @@ def generate_feedback(rep_data, all_angles, video_path):
         print("4. Try a different video angle")
         return
     
-    print(f"\n✅ DETECTED {len(rep_data)} PUSH-UP REPS")
+    print(f"\nDETECTED {len(rep_data)} PUSH-UP REPS")
     print("-" * 60)
     
     # Analyze each rep
@@ -419,11 +419,11 @@ def generate_feedback(rep_data, all_angles, video_path):
         avg_depth = np.mean([rep["min_elbow_angle"] for rep in rep_data])
         avg_hip_drop_val = np.mean([rep["max_hip_drop"] for rep in rep_data])
         
-        print("\n🎯 KEY FINDINGS:")
+        print("\nKEY FINDINGS:")
         print("-" * 40)
         
         if avg_depth > 100:
-            print("🔴 PRIMARY ISSUE: INSUFFICIENT DEPTH")
+            print("PRIMARY ISSUE: INSUFFICIENT DEPTH")
             print("   • You're not reaching 90° elbow angle")
             print("   • NSCA standard requires 90° at bottom")
             print("   • Current average: {:.1f}°".format(avg_depth))
@@ -435,51 +435,51 @@ def generate_feedback(rep_data, all_angles, video_path):
             print("   4. Try kneeling push-ups to build strength")
             
         elif 80 <= avg_depth <= 100:
-            print("✅ GOOD: MEETS NSCA DEPTH STANDARD")
+            print("GOOD: MEETS NSCA DEPTH STANDARD")
             print("   • You're reaching proper elbow angle")
             print("   • NSCA standard: 90° elbow angle")
             print("   • Your average: {:.1f}°".format(avg_depth))
         
         else:  # avg_depth < 80
-            print("⚠️  EXCELLENT: DEEP RANGE OF MOTION")
+            print("EXCELLENT: DEEP RANGE OF MOTION")
             print("   • You're going deeper than required")
             print("   • NSCA standard: 90° elbow angle")
             print("   • Your average: {:.1f}°".format(avg_depth))
         
         # Check hip sag
         if avg_hip_drop_val > 30:
-            print("\n🔴 FORM ISSUE: HIP SAG")
+            print("\nFORM ISSUE: HIP SAG")
             print("   • Your hips are dropping during reps")
             print("   • Average sag: {:.1f}px".format(avg_hip_drop_val))
             print("   • Causes lower back strain")
             
-            print("\n🛠️  CORE ENGAGEMENT DRILLS:")
+            print("\nCORE ENGAGEMENT DRILLS:")
             print("   1. Practice plank holds (30-60 seconds)")
             print("   2. Focus on squeezing glutes during push-ups")
             print("   3. Try push-ups with band around waist")
             print("   4. Film from side to monitor alignment")
         
         elif avg_hip_drop_val > 15:
-            print("\n⚠️  FORM ISSUE: MILD HIP SAG")
+            print("\nFORM ISSUE: MILD HIP SAG")
             print("   • Slight hip drop detected")
             print("   • Average sag: {:.1f}px".format(avg_hip_drop_val))
             print("   • Work on core bracing")
         else:
-            print("\n✅ GOOD: EXCELLENT BODY ALIGNMENT")
+            print("\nGOOD: EXCELLENT BODY ALIGNMENT")
             print("   • Straight body line maintained")
             print("   • Core engagement is good")
             print("   • Your average sag: {:.1f}px".format(avg_hip_drop_val))
     
-    print("\n📋 NSCA TECHNICAL CHECKLIST:")
+    print("\nNSCA TECHNICAL CHECKLIST:")
     print("-" * 40)
     checkboxes = [
-        ("Hands shoulder-width apart", "✅"),
-        ("Elbows at 45° to torso", "✅"),
-        ("Straight body line", "✅" if avg_hip_drop_val <= 20 else "⚠️"),
-        ("Chest lowers to floor", "✅" if avg_depth <= 100 else "⚠️"),
-        ("Full extension at top", "✅"),
-        ("Head neutral position", "✅"),
-        ("Controlled tempo", "✅"),
+        ("Hands shoulder-width apart", "CORRECT"),
+        ("Elbows at 45° to torso", "CORRECT"),
+        ("Straight body line", "CORRECT" if avg_hip_drop_val <= 20 else "IMPROVE"),
+        ("Chest lowers to floor", "CORRECT" if avg_depth <= 100 else "IMPROVE"),
+        ("Full extension at top", "CORRECT"),
+        ("Head neutral position", "CORRECT"),
+        ("Controlled tempo", "CORRECT"),
     ]
     
     for item, status in checkboxes:
@@ -568,7 +568,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         video_path = sys.argv[1]
         if not os.path.exists(video_path):
-            print(f"❌ Video not found: {video_path}")
+            print(f"Video not found: {video_path}")
             video_path = None
     
     # If no command line arg, look in current directory
@@ -579,10 +579,10 @@ if __name__ == "__main__":
                 break
     
     if video_path:
-        print(f"🎬 Found video: {video_path}")
+        print(f"Found video: {video_path}")
         analyze_pushup_video(video_path)
     else:
-        print("❌ No video file found!")
+        print("No video file found!")
         print("\nPlease either:")
         print("1. Place a video file in this folder")
         print("2. Run: python pushup_analyzer.py your_video.mp4")

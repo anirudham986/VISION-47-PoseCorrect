@@ -56,18 +56,18 @@ def analyze_deadlift_video(video_path):
     Main deadlift analysis function - shows live preview and gives feedback
     """
     print("=" * 60)
-    print("🏋️‍♂️ DEADLIFT ANALYZER - LIVE PREVIEW + FEEDBACK")
+    print("DEADLIFT ANALYZER - LIVE PREVIEW + FEEDBACK")
     print("=" * 60)
     
     # Check video file
     if not os.path.exists(video_path):
-        print(f"❌ Video not found: {video_path}")
+        print(f"Video not found: {video_path}")
         return
     
     # Open video
     cap = cv2.VideoCapture(video_path)
     if not cap.isOpened():
-        print("❌ Cannot open video")
+        print("Cannot open video")
         return
     
     # Get video info
@@ -76,11 +76,11 @@ def analyze_deadlift_video(video_path):
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     
-    print(f"📹 Video: {os.path.basename(video_path)}")
-    print(f"📐 Resolution: {width}x{height}")
-    print(f"⏱️  Duration: {total_frames/fps:.1f}s")
+    print(f"Video: {os.path.basename(video_path)}")
+    print(f"Resolution: {width}x{height}")
+    print(f"Duration: {total_frames/fps:.1f}s")
     print("-" * 60)
-    print("▶️  Starting live analysis...")
+    print("Starting live analysis...")
     print("   Press 'Q' to quit | 'S' to screenshot | 'P' to pause")
     print("-" * 60)
     
@@ -189,7 +189,7 @@ def analyze_deadlift_video(video_path):
                                 "shoulder_positions": [],
                                 "start_frame": frame_count
                             }
-                            print(f"   🔼 Rep {rep_count + 1} started (Knee: {current_knee_angle}°)")
+                            print(f"Rep {rep_count + 1} started (Knee: {current_knee_angle}°)")
 
                         # 2. Track rep data while in lift
                         if in_lift:
@@ -214,9 +214,9 @@ def analyze_deadlift_video(video_path):
                                 
                                 if rep_analysis["warnings"]:
                                     warning_flags.extend(rep_analysis["warnings"])
-                                    print(f"   ⚠️  Rep {rep_count} complete with warnings (Knee: {current_knee_angle}°)")
+                                    print(f"Rep {rep_count} complete with warnings (Knee: {current_knee_angle}°)")
                                 else:
-                                    print(f"   ✅ Rep {rep_count} complete (Knee: {current_knee_angle}°)")
+                                    print(f"Rep {rep_count} complete (Knee: {current_knee_angle}°)")
                         
                         # --- END OF THE CORRECTED REP LOGIC ---
                         
@@ -228,26 +228,26 @@ def analyze_deadlift_video(video_path):
                                                    rep_count, lift_phase, warning_flags, width, height)
                 
                 # Show live preview
-                cv2.imshow('🏋️‍♂️ LIVE DEADLIFT ANALYSIS - Press Q to quit', image)
+                cv2.imshow('LIVE DEADLIFT ANALYSIS - Press Q to quit', image)
             
             # Handle keys
             key = cv2.waitKey(1 if not paused else 0) & 0xFF
             
             if key == ord('q') or key == 27:
-                print("\n⏹️  Stopping analysis...")
+                print("\nStopping analysis...")
                 break
             elif key == ord('p'):
                 paused = not paused
-                print(f"   {'⏸️  Paused' if paused else '▶️  Resumed'}")
+                print(f"   {'Paused' if paused else 'Resumed'}")
             elif key == ord('s'):
                 screenshot = f"deadlift_frame_{frame_count}.jpg"
                 cv2.imwrite(screenshot, image)
-                print(f"   📸 Saved: {screenshot}")
+                print(f"Saved: {screenshot}")
             elif key == ord(' '):  # Space to manually mark rep
                 if in_lift:
                     in_lift = False
                     rep_count += 1
-                    print(f"   🎯 Manually marked rep {rep_count}")
+                    print(f"Manually marked rep {rep_count}")
     
     # Cleanup
     cap.release()
@@ -255,7 +255,7 @@ def analyze_deadlift_video(video_path):
     
     # Generate feedback
     print("\n" + "=" * 60)
-    print("📊 ANALYSIS COMPLETE - GENERATING FEEDBACK")
+    print("ANALYSIS COMPLETE - GENERATING FEEDBACK")
     print("=" * 60)
     
     generate_deadlift_feedback_safe(rep_data, video_path, warning_flags)
@@ -472,7 +472,7 @@ def generate_deadlift_feedback_safe(rep_data, video_path, warnings):
     """Safe feedback generation"""
     
     if not rep_data:
-        print("\n❌ NO DEADLIFTS DETECTED!")
+        print("\nNO DEADLIFTS DETECTED!")
         print("\nTips:")
         print("1. Use SIDE VIEW for best results")
         print("2. Make sure entire body is visible")
@@ -480,7 +480,7 @@ def generate_deadlift_feedback_safe(rep_data, video_path, warnings):
         print("4. Good lighting helps detection")
         return
     
-    print(f"\n✅ DETECTED {len(rep_data)} DEADLIFT REPS")
+    print(f"\nDETECTED {len(rep_data)} DEADLIFT REPS")
     print("-" * 60)
     
     # Collect valid angles
@@ -508,19 +508,19 @@ def generate_deadlift_feedback_safe(rep_data, video_path, warnings):
         all_warnings.extend(rep.get("warnings", []))
     
     if all_warnings:
-        print("\n⚠️  FORM ISSUES DETECTED:")
+        print("\nFORM ISSUES DETECTED:")
         print("-" * 40)
         for warning in set(all_warnings):  # Remove duplicates
             count = all_warnings.count(warning)
             print(f"   • {warning} ({count} reps)")
     else:
-        print("\n✅ NO MAJOR FORM ISSUES DETECTED")
+        print("\nNO MAJOR FORM ISSUES DETECTED")
     
     print("\n" + "=" * 60)
-    print("💡 NSCA DEADLIFT GUIDELINES")
+    print("NSCA DEADLIFT GUIDELINES")
     print("=" * 60)
     
-    print("\n🎯 PROPER SETUP:")
+    print("\nPROPER SETUP:")
     print("-" * 40)
     setup_points = [
         "1. Feet hip-width apart",
@@ -536,7 +536,7 @@ def generate_deadlift_feedback_safe(rep_data, video_path, warnings):
     for point in setup_points:
         print(f"   {point}")
     
-    print("\n🚀 EXECUTION:")
+    print("\nEXECUTION:")
     print("-" * 40)
     execution_points = [
         "1. Push through heels (leg drive)",
@@ -551,7 +551,7 @@ def generate_deadlift_feedback_safe(rep_data, video_path, warnings):
     for point in execution_points:
         print(f"   {point}")
     
-    print("\n🔧 COMMON FIXES:")
+    print("\nCOMMON FIXES:")
     print("-" * 40)
     fixes = [
         "Back rounds: Reduce weight, strengthen core",
@@ -568,7 +568,7 @@ def generate_deadlift_feedback_safe(rep_data, video_path, warnings):
     save_simple_report(rep_data, video_path, warnings)
     
     print("\n" + "=" * 60)
-    print("🎯 ANALYSIS COMPLETE")
+    print("ANALYSIS COMPLETE")
     print("=" * 60)
 
 def save_simple_report(rep_data, video_path, warnings):
@@ -597,7 +597,7 @@ def save_simple_report(rep_data, video_path, warnings):
             
             if rep.get("warnings"):
                 for warning in rep["warnings"]:
-                    f.write(f"  ⚠️  {warning}\n")
+                    f.write(f"{warning}\n")
         
         f.write("\nRecommendations:\n")
         f.write("-" * 30 + "\n")
@@ -607,7 +607,7 @@ def save_simple_report(rep_data, video_path, warnings):
         f.write("4. Focus on leg drive, not back pull\n")
         f.write("5. Keep bar close to body\n")
     
-    print(f"\n💾 Report saved: {filename}")
+    print(f"\nReport saved: {filename}")
 
 # Main function
 if __name__ == "__main__":
@@ -629,10 +629,10 @@ if __name__ == "__main__":
                 break
     
     if video_path and os.path.exists(video_path):
-        print(f"🎬 Analyzing: {video_path}")
+        print(f"Analyzing: {video_path}")
         analyze_deadlift_video(video_path)
     else:
-        print("❌ No video file found!")
+        print("No video file found!")
         print("\nUsage: python deadlift_analyzer.py <video_file>")
         print("   or place a video in the same folder")
         print("\nSupported: .mp4, .avi, .mov, .mkv, .webm")
