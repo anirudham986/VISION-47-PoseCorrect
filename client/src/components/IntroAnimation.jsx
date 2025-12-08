@@ -15,6 +15,26 @@ const IntroAnimation = ({ onComplete }) => {
         return () => clearTimeout(timer);
     }, [step]);
 
+    useEffect(() => {
+        const audio = new Audio('/intro.mp3');
+        audio.volume = 0.5;
+
+        const playAudio = async () => {
+            try {
+                await audio.play();
+            } catch (err) {
+                console.log("Autoplay prevented:", err);
+            }
+        };
+
+        playAudio();
+
+        return () => {
+            audio.pause();
+            audio.currentTime = 0;
+        };
+    }, []);
+
     const variants = {
         initial: { scale: 0.8, opacity: 0 },
         animate: { scale: 1, opacity: 1, transition: { duration: 0.5, ease: "circOut" } },
