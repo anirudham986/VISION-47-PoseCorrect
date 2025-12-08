@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import { Linkedin } from 'lucide-react';
 
 const teamMembers = [
-    { name: 'Arya Wadhwa', role: 'Student', linkedin: 'https://www.linkedin.com/' },
-    { name: 'Dilraj Singh', role: 'Student', linkedin: 'https://www.linkedin.com/' },
+    { name: 'Arya Wadhwa', role: 'Student', linkedin: 'https://www.linkedin.com/in/aryawadhwa' },
+    { name: 'Dilraj Singh', role: 'Student', linkedin: 'https://www.linkedin.com/in/dilraj-singh-cos007/' },
     { name: 'Shlokk Sikka', role: 'Student', linkedin: 'https://www.linkedin.com/in/shlokk-sikka-127334391/' },
     { name: 'Anirudh M', role: 'Student', linkedin: 'https://www.linkedin.com/' },
     { name: 'Ashwin Acharya', role: 'Student', linkedin: 'https://www.linkedin.com/' },
