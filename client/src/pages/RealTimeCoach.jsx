@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Activity, CheckCircle, Video, Loader } from 'lucide-react';
@@ -29,7 +30,7 @@ const RealTimeCoach = () => {
     // Steps: 'idle' -> 'countdown' -> 'recording' -> 'analyzing' -> 'result'
     const [step, setStep] = useState('countdown');
     const [countdown, setCountdown] = useState(5);
-    const [recordTime, setRecordTime] = useState(10);
+    const [recordTime, setRecordTime] = useState(60);
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
 
@@ -125,8 +126,18 @@ const RealTimeCoach = () => {
         setResult(null);
         setError(null);
         setCountdown(5);
-        setRecordTime(10);
+        setRecordTime(60);
         setStep('countdown');
+    };
+
+    const handleManualStop = () => {
+        stopRecording();
+        setStep('analyzing');
+    };
+
+    const handleCancel = () => {
+        setStep('idle');
+        navigate('/dashboard');
     };
 
     return (
@@ -260,16 +271,33 @@ const RealTimeCoach = () => {
                                 {/* Overlay UI */}
                                 <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', pointerEvents: 'none' }}>
                                     {step === 'countdown' && (
-                                        <motion.div
-                                            key={countdown}
-                                            initial={{ scale: 0.5, opacity: 0 }}
-                                            animate={{ scale: 1.5, opacity: 1 }}
-                                            exit={{ scale: 2, opacity: 0 }}
-                                            transition={{ duration: 0.5 }}
-                                            style={{ fontSize: '10rem', fontWeight: 'bold', color: 'var(--color-neon-pink)', textShadow: '0 0 20px rgba(0,0,0,0.5)' }}
-                                        >
-                                            {countdown}
-                                        </motion.div>
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}>
+                                            <motion.div
+                                                key={countdown}
+                                                initial={{ scale: 0.5, opacity: 0 }}
+                                                animate={{ scale: 1.5, opacity: 1 }}
+                                                exit={{ scale: 2, opacity: 0 }}
+                                                transition={{ duration: 0.5 }}
+                                                style={{ fontSize: '10rem', fontWeight: 'bold', color: 'var(--color-neon-pink)', textShadow: '0 0 20px rgba(0,0,0,0.5)' }}
+                                            >
+                                                {countdown}
+                                            </motion.div>
+                                            <button
+                                                onClick={handleCancel}
+                                                style={{
+                                                    padding: '0.75rem 2rem',
+                                                    backgroundColor: 'rgba(50, 50, 50, 0.8)',
+                                                    color: '#fff',
+                                                    border: '1px solid #666',
+                                                    borderRadius: '2rem',
+                                                    cursor: 'pointer',
+                                                    backdropFilter: 'blur(5px)',
+                                                    pointerEvents: 'auto'
+                                                }}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
                                     )}
 
                                     {step === 'recording' && (
@@ -280,6 +308,28 @@ const RealTimeCoach = () => {
                                             <div style={{ fontSize: '5rem', fontWeight: 'bold', color: 'var(--color-neon-green)', textShadow: '0 0 20px rgba(0,0,0,0.5)' }}>
                                                 {recordTime}s
                                             </div>
+                                            <button
+                                                onClick={handleManualStop}
+                                                style={{
+                                                    marginTop: '2rem',
+                                                    padding: '1rem 3rem',
+                                                    fontSize: '1.2rem',
+                                                    backgroundColor: 'var(--color-neon-pink)',
+                                                    color: '#fff',
+                                                    border: 'none',
+                                                    borderRadius: '3rem',
+                                                    fontWeight: 'bold',
+                                                    cursor: 'pointer',
+                                                    boxShadow: '0 0 20px rgba(255, 0, 153, 0.5)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '0.5rem',
+                                                    pointerEvents: 'auto'
+                                                }}
+                                            >
+                                                <div style={{ width: '12px', height: '12px', backgroundColor: '#fff', borderRadius: '2px' }}></div>
+                                                STOP & ANALYZE
+                                            </button>
                                         </div>
                                     )}
                                 </div>
