@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Upload, FileVideo, CheckCircle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { API_URL } from '../config';
 
 const VideoAnalysis = () => {
     const navigate = useNavigate();
@@ -55,8 +56,6 @@ const VideoAnalysis = () => {
         const formData = new FormData();
         formData.append('file', videoFile);
         formData.append('exercise_type', selectedExercise);
-
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:10000';
 
         try {
             const response = await fetch(`${API_URL}/analyze`, {

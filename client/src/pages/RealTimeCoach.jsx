@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Activity, CheckCircle, Video, Loader } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useReactMediaRecorder } from "react-media-recorder";
+import { API_URL } from '../config';
 
 // Component to render the preview stream
 const VideoPreview = ({ stream }) => {
@@ -99,8 +100,6 @@ const RealTimeCoach = () => {
         const formData = new FormData();
         formData.append('file', videoFile);
         formData.append('exercise_type', selectedExercise);
-
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:10000';
 
         try {
             const response = await fetch(`${API_URL}/analyze`, {
