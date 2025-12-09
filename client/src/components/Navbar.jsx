@@ -5,26 +5,17 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     return (
-        <nav style={{ padding: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--color-black)', color: 'var(--color-white)' }}>
-            <Link to="/" style={{ textDecoration: 'none' }}>
-                <h2 style={{ fontSize: '1.5rem', color: 'var(--color-neon-green)', margin: 0 }}>GYMBRO</h2>
+        <nav className="navbar">
+            <Link to="/" className="navbar-brand">
+                <h2>GYMBRO</h2>
             </Link>
-            <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
-                <Link to="/about" style={{ color: 'var(--color-white)', textDecoration: 'none', fontSize: '1rem' }}>About Us</Link>
-                <Link to="/contact" style={{ color: 'var(--color-white)', textDecoration: 'none', fontSize: '1rem' }}>Contact Us</Link>
-                <Link to="/privacy" style={{ color: 'var(--color-white)', textDecoration: 'none', fontSize: '1rem' }}>Privacy</Link>
+            <div className="navbar-links">
+                <Link to="/about" className="nav-link">About Us</Link>
+                <Link to="/contact" className="nav-link">Contact Us</Link>
+                <Link to="/privacy" className="nav-link">Privacy</Link>
                 <button
                     onClick={() => navigate('/dashboard')}
-                    style={{
-                        padding: '0.8rem 1.5rem',
-                        backgroundColor: 'var(--color-white)',
-                        color: 'var(--color-black)',
-                        borderRadius: '2rem',
-                        fontWeight: 'bold',
-                        fontSize: '1rem',
-                        border: 'none',
-                        cursor: 'pointer'
-                    }}
+                    className="btn-launch"
                 >
                     Launch App
                 </button>
