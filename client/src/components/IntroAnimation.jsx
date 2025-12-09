@@ -95,12 +95,13 @@ const IntroAnimation = ({ onComplete, onStart }) => {
                 <div style={{
                     position: 'absolute',
                     bottom: '2rem',
-                    color: 'rgba(255,255,255,0.5)',
+                    color: 'rgba(255,255,255,0.0)', /* Hidden but keeps layout if needed, or just remove */
                     fontSize: '0.8rem',
                     textTransform: 'uppercase',
-                    letterSpacing: '2px'
+                    letterSpacing: '2px',
+                    pointerEvents: 'none'
                 }}>
-                    Click anywhere to skip
+                    {/* Hidden */}
                 </div>
             )}
         </motion.div>
