@@ -10,18 +10,13 @@ from pathlib import Path
 # Add current directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-# Import core analyzer (adjusted for new location)
-# Import core analyzers
-from core.squat_analyzer import analyze_squat_video
-from core.pushup_analyzer import analyze_pushup_video
-from core.pullup_analyzer import analyze_pullup_video
-from core.deadlift_analyzer import analyze_deadlift_video
-from core.bench_press_analyzer import analyze_bench_press_video
+# Lazy imports - analyzers will be imported when needed to avoid blocking startup
 
 app = FastAPI()
 
 # CORS Setup
 origins = [
+    "*", # Allow all origins for deployment
     "http://localhost:5173",  # React Frontend
     "http://localhost:3000",
 ]
@@ -72,24 +67,31 @@ async def analyze_video(
         
         start_time = time.time()
         
+        # Lazy import analyzers to avoid blocking server startup
         if exercise_type == "squat":
             print("DEBUG: Starting Squat Analysis...")
+            from core.squat_analyzer import analyze_squat_video
             analysis_result = analyze_squat_video(file_path, output_path)
         elif exercise_type == "pushup":
             print("DEBUG: Starting Pushup Analysis...")
+            from core.pushup_analyzer import analyze_pushup_video
             analysis_result = analyze_pushup_video(file_path, output_path)
         elif exercise_type == "pullup":
             print("DEBUG: Starting Pullup Analysis...")
+            from core.pullup_analyzer import analyze_pullup_video
             analysis_result = analyze_pullup_video(file_path, output_path)
         elif exercise_type == "deadlift":
             print("DEBUG: Starting Deadlift Analysis...")
+            from core.deadlift_analyzer import analyze_deadlift_video
             analysis_result = analyze_deadlift_video(file_path, output_path)
         elif exercise_type == "benchpress":
             print("DEBUG: Starting BenchPress Analysis...")
+            from core.bench_press_analyzer import analyze_bench_press_video
             analysis_result = analyze_bench_press_video(file_path, output_path)
         else:
             # Fallback to squat if unknown
             print(f"Unknown exercise type: {exercise_type}, defaulting to squat")
+            from core.squat_analyzer import analyze_squat_video
             analysis_result = analyze_squat_video(file_path, output_path)
             
         print(f"DEBUG: Analysis complete in {time.time() - start_time:.2f}s")

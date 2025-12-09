@@ -230,6 +230,11 @@ def analyze_squat_video(video_path, output_path=None):
     # Write using MoviePy
     if output_path and output_frames:
         try:
+            # Fix for Real Time Coach video speed
+            if "recorded_video" in os.path.basename(video_path) and len(output_frames) > 0:
+                fps = len(output_frames) / 10.0
+                print(f"DEBUG: Detected Real Time Coach video. Corrected FPS: {fps}")
+
             from moviepy.editor import ImageSequenceClip
             clip = ImageSequenceClip(output_frames, fps=fps)
             clip.write_videofile(output_path, codec='libx264', audio=False, logger=None, preset='ultrafast', threads=4)
