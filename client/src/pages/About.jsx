@@ -6,7 +6,7 @@ const teamMembers = [
     { name: 'Arya Wadhwa', role: 'Student', linkedin: 'https://www.linkedin.com/in/aryawadhwa' },
     { name: 'Dilraj Singh', role: 'Student', linkedin: 'https://www.linkedin.com/in/dilraj-singh-cos007/' },
     { name: 'Shlokk Sikka', role: 'Student', linkedin: 'https://www.linkedin.com/in/shlokk-sikka-127334391/' },
-    { name: 'Anirudh M', role: 'Student', linkedin: 'https://www.linkedin.com/' },
+    { name: 'Anirudha M', role: 'Student', linkedin: 'https://www.linkedin.com/in/anirudha-mahesha-6262a2399/' },
     { name: 'Ashwin Acharya', role: 'Student', linkedin: 'https://www.linkedin.com/' },
 ];
 
