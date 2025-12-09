@@ -99,7 +99,7 @@ const RealTimeCoach = () => {
         formData.append('file', videoFile);
         formData.append('exercise_type', selectedExercise);
 
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:10000';
 
         try {
             const response = await fetch(`${API_URL}/analyze`, {

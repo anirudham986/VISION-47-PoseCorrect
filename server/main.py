@@ -16,6 +16,7 @@ app = FastAPI()
 
 # CORS Setup
 origins = [
+    "*", # Allow all origins for deployment
     "http://localhost:5173",  # React Frontend
     "http://localhost:3000",
 ]
