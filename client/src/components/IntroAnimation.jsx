@@ -31,7 +31,8 @@ const IntroAnimation = ({ onComplete, onStart }) => {
         if (step === -1) {
             if (onStart) onStart();
             setStep(0);
-        } else if (step >= 3) {
+        } else {
+            // If playing (step 0-2) or ready (step 3), click skips to end
             onComplete();
         }
     };
@@ -90,6 +91,18 @@ const IntroAnimation = ({ onComplete, onStart }) => {
                     100% { opacity: 0.5; }
                 }
             `}</style>
+            {step >= 0 && (
+                <div style={{
+                    position: 'absolute',
+                    bottom: '2rem',
+                    color: 'rgba(255,255,255,0.5)',
+                    fontSize: '0.8rem',
+                    textTransform: 'uppercase',
+                    letterSpacing: '2px'
+                }}>
+                    Click anywhere to skip
+                </div>
+            )}
         </motion.div>
     );
 };
