@@ -2,7 +2,7 @@
 
 **Your Personal Trainer, Reimagined.**
 
-Gymbro is a next-generation full-stack fitness application that leverages computer vision to provide professional-grade form analysis. Designed with a high-energy "Spotify Wrapped" aesthetic, it combines a sleek React frontend with a powerful Python AI backend to democratize fitness coaching.
+Gymbro is a next-generation full-stack fitness application that leverages computer vision to provide professional-grade form analysis. It combines a sleek React frontend with a powerful Python AI backend to democratize fitness coaching.
 
 ![Gymbro Demo](assets/demo.webp)
 
