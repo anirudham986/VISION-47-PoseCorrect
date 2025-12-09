@@ -3,6 +3,7 @@ services:
   - type: web
     name: gymbro-backend
     env: python
+    plan: free
     rootDir: server
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
@@ -16,6 +17,7 @@ services:
   - type: web
     name: gymbro-frontend
     env: node
+    plan: free
     rootDir: client
     buildCommand: npm install && npm run build
     startCommand: npm run preview -- --port 4173 --host 0.0.0.0
