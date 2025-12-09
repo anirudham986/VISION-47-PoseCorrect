@@ -3,11 +3,11 @@ const getApiUrl = () => {
     // Get the env var
     let url = import.meta.env.VITE_API_URL;
 
-    // If not set, default to localhost (development fallback)
+    // If not set, allow dynamic local network access
+    // This allows the phone to connect to http://192.168.x.x:10000 automatically
     if (!url) {
-        // If we are in production (based on mode or hostname), this might be wrong if env var is missed.
-        // But for now, keep localhost default for local dev.
-        return 'http://localhost:10000';
+        const hostname = window.location.hostname;
+        return `http://${hostname}:10000`;
     }
 
     // If protocol is missing (Render provided just the host), prepend https://

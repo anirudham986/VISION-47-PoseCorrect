@@ -29,6 +29,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    return {"status": "online", "message": "GymBro Backend is functioning"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
 # Constants
 UPLOAD_DIR = "uploads"
 OUTPUT_DIR = "outputs"
